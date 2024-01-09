@@ -25,8 +25,9 @@ enum class scheme_b : unsigned char{
 
 };
 
-inline unsigned int scheme_b_version = 1;
+inline constexpr unsigned int scheme_b_version = 1;
 
+inline constexpr unsigned int number_of_obj_position = 0;
 
 }
 
