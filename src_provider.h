@@ -6,6 +6,7 @@
 #define SRC_PROVIDER_H
 #include <cstddef>
 #include <fstream>
+#include <mutex>
 #include <utility>
 
 namespace bsdb {
@@ -49,6 +50,7 @@ namespace bsdb {
     class src_provider_impl_file : virtual public src_provider<src_provider_impl_file> {
     private:
         std::fstream file;
+        mutable std::mutex mutex_;
 
     public:
         explicit src_provider_impl_file(const std::string& path, std::ios_base::openmode mode);
@@ -80,20 +82,22 @@ namespace bsdb {
         // };
         template<typename... Args>
         unsigned int write_obj(const Args &... args) {
+            std::lock_guard lock(mutex_);
             ((file.write(reinterpret_cast<const char *>(&args), sizeof(args))), ...);
             return (sizeof(args) + ...);
         };
 
 
-
         template<contaner_out... Args>
         unsigned int write_container(const Args &... args) {
+            std::lock_guard lock(mutex_);
             ((file.write(reinterpret_cast<const char *>(args.data()), args.size() * sizeof(args.at(0)))), ...);
             return ((args.size() * sizeof(args.at(0))) + ...);
         };
 
         template<typename... Args>
         unsigned int read_obj(Args &... args) {
+            std::lock_guard lock(mutex_);
             ((file.read(reinterpret_cast<char *>(&args), sizeof(Args))), ...);
             return (sizeof(Args) + ...);
         };

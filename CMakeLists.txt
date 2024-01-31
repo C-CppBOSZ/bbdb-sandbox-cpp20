@@ -11,4 +11,7 @@ add_executable(mainBSDB main.cpp
         scheme_b.cpp
         scheme_b.h
         src_provider.cpp
-        src_provider.h)
+        src_provider.h
+        huf/huf.h
+        ptr_guard.cpp
+        ptr_guard.h)
