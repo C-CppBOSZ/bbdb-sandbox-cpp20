@@ -11,10 +11,11 @@ template<typename Derived>
 class ptr_guard {
 private:
     unsigned long ptr_;
-    src_provider<Derived> provider_;
+    src_provider<Derived> &provider_;
 
 public:
-    explicit ptr_guard(bsdb::src_provider<Derived> provider): ptr_(provider.get_ptr()){}
+    explicit ptr_guard(bsdb::src_provider<Derived> &provider): ptr_(provider.get_ptr()), provider_(provider) {
+    }
 
     unsigned long ptr() const {
         return ptr_;
