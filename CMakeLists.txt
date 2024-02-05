@@ -4,14 +4,16 @@ project(mainBSDB)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(mainBSDB main.cpp
-        bodb.cpp
-        bodb.h
-        type_provider.cpp
-        type_provider.h
-        scheme_b.cpp
-        scheme_b.h
-        src_provider.cpp
-        src_provider.h
-        huf/huf.h
-        ptr_guard.cpp
-        ptr_guard.h)
+        src/bsdb/bodb/bodb.cpp
+        src/bsdb/bodb/bodb.h
+        src/bsdb/bodb/type_provider.cpp
+        src/bsdb/bodb/type_provider.h
+        src/bsdb/bodb/scheme_b.cpp
+        src/bsdb/bodb/scheme_b.h
+        src/bsdb/src_provider.cpp
+        src/bsdb/src_provider.h
+        src/huf/huf.h
+        src/bsdb/ptr_guard.cpp
+        src/bsdb/ptr_guard.h
+        src/bsdb/ptr_provider.cpp
+        src/bsdb/ptr_provider.h)
