@@ -19,13 +19,13 @@ namespace bsdb::bodb {
     //         try {
     //             _src->open(path, std::ios::out | std::ios::binary);
     //             if (!_src->is_open()) {
-    //                 throw std::runtime_error("Error creating file");
+    //                 throw std::runtime_error("Error creating file_");
     //             }
     //             _src->write_obj(static_cast<unsigned long>(0L));
     //             _src->close();
     //             _src->open(path, std::ios::in | std::ios::out | std::ios::binary);
     //         } catch (const std::exception &e) {
-    //             throw std::runtime_error("Error opening or creating file: " + std::string(e.what()));
+    //             throw std::runtime_error("Error opening or creating file_: " + std::string(e.what()));
     //         }
     //     }
     //
@@ -88,13 +88,13 @@ namespace bsdb::bodb {
             try {
                 _src->open(path, std::ios::out | std::ios::binary);
                 if (!_src->is_open()) {
-                    throw std::runtime_error("Error creating file");
+                    throw std::runtime_error("Error creating file_");
                 }
                 _src->write_obj(static_cast<unsigned long>(0L));
                 _src->close();
                 _src->open(path, std::ios::in | std::ios::out | std::ios::binary);
             } catch (const std::exception &e) {
-                throw std::runtime_error("Error opening or creating file: " + std::string(e.what()));
+                throw std::runtime_error("Error opening or creating file_: " + std::string(e.what()));
             }
         }
 

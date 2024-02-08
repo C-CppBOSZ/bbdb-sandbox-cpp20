@@ -8,6 +8,9 @@
 #include <fstream>
 #include <mutex>
 #include <utility>
+#include <vector>
+
+#include "ptr_provider.h"
 
 namespace bsdb {
     template<typename T>
@@ -24,6 +27,8 @@ namespace bsdb {
         virtual ~src_provider() = default;
 
         virtual unsigned long get_ptr() = 0;
+
+        virtual ptr_provider push_ptr() = 0;
 
         virtual void set_ptr(const unsigned long &ptr) = 0;
 
@@ -49,8 +54,9 @@ namespace bsdb {
 
     class src_provider_impl_file : virtual public src_provider<src_provider_impl_file> {
     private:
-        std::fstream file;
+        std::fstream file_;
         mutable std::mutex mutex_;
+        std::vector<unsigned long> ptrs_;
 
     public:
         explicit src_provider_impl_file(const std::string& path, std::ios_base::openmode mode);
@@ -65,6 +71,8 @@ namespace bsdb {
 
         unsigned long get_ptr() override;
 
+        ptr_provider push_ptr() override;
+
         void set_ptr(const unsigned long &ptr) override;
 
         void ptr_to_end() override;
@@ -74,7 +82,7 @@ namespace bsdb {
         // template<typename... Args>
         // unsigned int write_obj(const Args &... args) {
         //     // if constexpr (sizeof...(Args) > 0) {
-        //         (file.write(reinterpret_cast<const char *>(args), sizeof(Args)), ...);
+        //         (file_.write(reinterpret_cast<const char *>(args), sizeof(Args)), ...);
         //         return (sizeof(Args) + ...);
         //     // } else {
         //     //     return 0;
@@ -83,7 +91,7 @@ namespace bsdb {
         template<typename... Args>
         unsigned int write_obj(const Args &... args) {
             std::lock_guard lock(mutex_);
-            ((file.write(reinterpret_cast<const char *>(&args), sizeof(args))), ...);
+            ((file_.write(reinterpret_cast<const char *>(&args), sizeof(args))), ...);
             return (sizeof(args) + ...);
         };
 
@@ -91,16 +99,17 @@ namespace bsdb {
         template<contaner_out... Args>
         unsigned int write_container(const Args &... args) {
             std::lock_guard lock(mutex_);
-            ((file.write(reinterpret_cast<const char *>(args.data()), args.size() * sizeof(args.at(0)))), ...);
+            ((file_.write(reinterpret_cast<const char *>(args.data()), args.size() * sizeof(args.at(0)))), ...);
             return ((args.size() * sizeof(args.at(0))) + ...);
         };
 
         template<typename... Args>
         unsigned int read_obj(Args &... args) {
             std::lock_guard lock(mutex_);
-            ((file.read(reinterpret_cast<char *>(&args), sizeof(Args))), ...);
+            ((file_.read(reinterpret_cast<char *>(&args), sizeof(Args))), ...);
             return (sizeof(Args) + ...);
-        };
+        }
+
     };
 
 
