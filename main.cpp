@@ -13,6 +13,7 @@ int main() {
     // bsdb::bodb::bodb bodb("/home/bogusz/CLionProjects/mainBSDB/test", "test");
     auto bodb = bsdb::bodb::open_db_file("/home/bogusz/CLionProjects/mainBSDB/test", "test");
     // bodb.add_simple_type(true,true,"int",4);
+    bodb.lazy_delete_n(0,8);
 
     // auto fact = [&](int nu) {
     //     for (int i = 0; i < 10; i++) {
@@ -22,7 +23,7 @@ int main() {
     //     }
     // };
     // std::vector<std::thread> tr = {};
-    // for (int i = 0; i < 10000; i++) {
+    // for (int i = 0; i < 10; i++) {
     //     std::thread t(fact, i);
     //     tr.push_back(std::move(t));  // Move semantics for thread
     // }

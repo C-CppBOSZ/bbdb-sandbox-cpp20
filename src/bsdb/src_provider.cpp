@@ -29,9 +29,9 @@ namespace bsdb {
         return file_.tellg();
     }
 
-    ptr_provider src_provider_impl_file::push_ptr() {
+    ptr_guard src_provider_impl_file::push_ptr() {
         std::lock_guard lock(mutex_);
-        return ptr_provider(&ptrs_,file_.tellg());
+        return ptr_guard(&ptrs_,file_.tellg());
     }
 
     void src_provider_impl_file::set_ptr(const unsigned long &ptr) {
@@ -48,7 +48,6 @@ namespace bsdb {
 
     void src_provider_impl_file::shift_ptr(const long &shift) {
         std::lock_guard lock(mutex_);
-        file_.seekg(shift, std::ios::cur);
-        file_.seekp(shift, std::ios::cur);
+        shift_ptr_unsafe_thread(shift);
     }
 } // bsdb

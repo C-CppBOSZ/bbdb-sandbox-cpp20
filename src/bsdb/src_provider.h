@@ -6,11 +6,13 @@
 #define SRC_PROVIDER_H
 #include <cstddef>
 #include <fstream>
+#include <iostream>
 #include <mutex>
+#include <thread>
 #include <utility>
 #include <vector>
 
-#include "ptr_provider.h"
+#include "ptr_guard.h"
 
 namespace bsdb {
     template<typename T>
@@ -28,7 +30,7 @@ namespace bsdb {
 
         virtual unsigned long get_ptr() = 0;
 
-        virtual ptr_provider push_ptr() = 0;
+        virtual ptr_guard push_ptr() = 0;
 
         virtual void set_ptr(const unsigned long &ptr) = 0;
 
@@ -50,6 +52,22 @@ namespace bsdb {
         unsigned int read_obj(Args &... args) {
             return dynamic_cast<Derived*>(this)->template read_obj(args...);
         };
+
+        template<typename... Args>
+        unsigned int insert_obj(const Args &... args) {
+            return dynamic_cast<Derived*>(this)->template insert_obj(args...);
+        };
+
+        template<contaner_out... Args>
+        unsigned int insert_contaner(const Args &... args) {
+            return dynamic_cast<Derived*>(this)->template insert_container(args...);
+        };
+
+        virtual void delete_n(const unsigned long &ptr,const long &n) = 0;
+        virtual void delete_(const unsigned long &ptr_start,const unsigned long &ptr_end) = 0;
+
+        virtual void lazy_delete_n(const unsigned long &ptr,const long &n) = 0;
+        virtual void lazy_delete_(const unsigned long &ptr_start,const unsigned long &ptr_end) = 0;
     };
 
     class src_provider_impl_file : virtual public src_provider<src_provider_impl_file> {
@@ -57,6 +75,86 @@ namespace bsdb {
         std::fstream file_;
         mutable std::mutex mutex_;
         std::vector<unsigned long> ptrs_;
+
+        void simple_shift_l_unsafe_thread(const unsigned long &ptr,const unsigned long &n,const unsigned long &size_buffer = 4096) {
+            if(n == 0) return;
+            char buffer[size_buffer];
+            ptr_to_end(); // TODO ehhhhh deadlock
+            unsigned long ptr_end = get_ptr();
+            unsigned long size = ptr_end - ptr;
+            unsigned int n_shift = size / size_buffer;
+            set_ptr(ptr); // TODO ehhhhh deadlock
+
+            file_.read(buffer,size_buffer);
+
+        }
+
+        void shift_r_unsafe_thread(const unsigned long &ptr,const unsigned long &n,unsigned int size_buffer = 4096) {
+            if(n == 0) return;
+            if(n > size_buffer) return shift_r_n_unsafe_thread(ptr,n);
+            char buffer[size_buffer];
+
+            unsigned long size = get_size_unsafe_thread() - (ptr + n);
+            // unsigned int n_shift = size / size_buffer;
+            set_ptr_unsafe_thread(ptr);
+
+            while (!file_.eof()) {
+
+
+
+            }
+
+            file_.read(buffer,size_buffer);
+        }
+
+        void shift_r_n_unsafe_thread(const unsigned long &ptr,const unsigned long &n) { // TODO kiedy n jest wieksze od całego pliku
+            if(n == 0) return;
+            char buffer[2][n];
+            bool switch_buffer = false;
+            unsigned long size = get_size_unsafe_thread();
+            set_ptr_unsafe_thread(ptr);
+            file_.read(buffer[switch_buffer],n);
+            while (!file_.eof()) {
+                if((static_cast<unsigned long>(file_.tellg()) + n) >= size) {
+                    const unsigned long tmp = size - static_cast<unsigned long>(file_.tellg());
+                    char tmp_buffer[tmp];
+                    file_.read(tmp_buffer,tmp);
+                    shift_ptr_unsafe_thread(-tmp);
+                    file_.write(buffer[switch_buffer],n);
+                    file_.write(tmp_buffer,tmp);
+                    break;
+                }
+                file_.read(buffer[!switch_buffer],n);
+                shift_ptr_unsafe_thread(-n);
+                file_.write(buffer[switch_buffer],n);
+                switch_buffer = !switch_buffer;
+            }
+
+        }
+
+
+        unsigned long get_size_unsafe_thread() {
+            const auto streampos = file_.tellg();
+            file_.seekg(0, std::ios::end);
+            const unsigned long tmp = file_.tellg();
+            file_.seekg(streampos);
+            return tmp;
+        }
+
+        void set_ptr_unsafe_thread(const unsigned long &ptr) {
+            file_.seekg(ptr, std::ios::beg);
+            file_.seekp(ptr, std::ios::beg);
+        }
+
+        void shift_ptr_unsafe_thread(const long &shift) {
+            file_.seekp(shift, std::ios::cur);
+            file_.seekg(file_.tellp()); // TODO najprawdopodobniej nie potrzebnr seekp przesówa też g
+        }
+
+        void ptr_to_end_unsafe_thread() {
+            file_.seekg(0, std::ios::end);
+            file_.seekp(0, std::ios::end);
+        }
 
     public:
         explicit src_provider_impl_file(const std::string& path, std::ios_base::openmode mode);
@@ -71,7 +169,7 @@ namespace bsdb {
 
         unsigned long get_ptr() override;
 
-        ptr_provider push_ptr() override;
+        ptr_guard push_ptr() override;
 
         void set_ptr(const unsigned long &ptr) override;
 
@@ -109,6 +207,37 @@ namespace bsdb {
             ((file_.read(reinterpret_cast<char *>(&args), sizeof(Args))), ...);
             return (sizeof(Args) + ...);
         }
+
+
+        template<typename... Args>
+        unsigned int insert_obj(const Args &... args) {
+            std::lock_guard lock(mutex_);
+
+
+
+        };
+
+        template<contaner_out... Args>
+        unsigned int insert_contaner(const Args &... args) {
+            std::lock_guard lock(mutex_);
+
+
+
+        };
+
+        void delete_n(const unsigned long &ptr,const long &n) {
+
+        };
+        void delete_(const unsigned long &ptr_start,const unsigned long &ptr_end) {
+
+        };
+        void lazy_delete_n(const unsigned long &ptr,const long &n) {
+            std::lock_guard lock(mutex_);
+            shift_r_n_unsafe_thread(ptr,n);
+        };
+        void lazy_delete_(const unsigned long &ptr_start,const unsigned long &ptr_end) {
+
+        };
 
     };
 

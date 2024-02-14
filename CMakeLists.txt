@@ -13,7 +13,7 @@ add_executable(mainBSDB main.cpp
         src/bsdb/src_provider.cpp
         src/bsdb/src_provider.h
         src/huf/huf.h
+        src/bsdb/index_ptr_guard.cpp
+        src/bsdb/index_ptr_guard.h
         src/bsdb/ptr_guard.cpp
-        src/bsdb/ptr_guard.h
-        src/bsdb/ptr_provider.cpp
-        src/bsdb/ptr_provider.h)
+        src/bsdb/ptr_guard.h)

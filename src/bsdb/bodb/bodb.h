@@ -7,7 +7,7 @@
 #include <filesystem>
 #include <vector>
 
-#include "../ptr_guard.h"
+#include "../index_ptr_guard.h"
 #include "scheme_b.h"
 #include "../src_provider.h"
 
@@ -34,7 +34,7 @@ namespace bsdb::bodb {
         unsigned long get_next_id() {
             unsigned long id = 0;
             {
-                ptr_guard guard(*src);
+                index_ptr_guard guard(*src);
                 src->set_ptr(number_of_obj_position);
                 src->read_obj(id);
                 src->set_ptr(number_of_obj_position);
@@ -55,7 +55,7 @@ namespace bsdb::bodb {
             std::lock_guard lg(mutex_);
             unsigned long next_id = get_next_id();
             {
-                ptr_guard guard(*src);
+                index_ptr_guard guard(*src);
                 src->ptr_to_end();
                 // 8 - index id | 1 - type | 1 - is_nullable>>is_dynamic | 4 - size name | {size name} - name | 4 - number of byte
                 src->write_obj(next_id, scheme_b::simple, options, static_cast<unsigned int>(name.size()));
@@ -77,7 +77,7 @@ namespace bsdb::bodb {
             std::lock_guard lg(mutex_);
             unsigned long next_id = get_next_id();
             {
-                ptr_guard guard(*src);
+                index_ptr_guard guard(*src);
                 // TODO sprawdzić czy typy istnieją
                 src->ptr_to_end();
                 // 8 - index id | 1 - type | 1 - is_nullable>>is_dynamic | 4 - size name | {size name} - name | 4 - number of type | {number of type}*8 - types
@@ -101,7 +101,7 @@ namespace bsdb::bodb {
             std::lock_guard lg(mutex_);
             unsigned long next_id = get_next_id();
             {
-                ptr_guard guard(*src);
+                index_ptr_guard guard(*src);
                 src->ptr_to_end();
                 // 8 - index id | 1 - type | 1 - is_nullable>>is_dynamic | 4 - size name | {size name} - name | 8 - type array | if{is_dynamic}: 8 - size array? 0 - array is dynamic
                 src->write_obj(next_id, scheme_b::array, options, static_cast<unsigned int>(name.size()));
@@ -126,7 +126,7 @@ namespace bsdb::bodb {
             std::lock_guard lg(mutex_);
             unsigned long next_id = get_next_id();
             {
-                ptr_guard guard(*src);
+                index_ptr_guard guard(*src);
                 // TODO sprawdzić czy typy istnieją
                 src->ptr_to_end();
                 // 8 - index id | 1 - type | 1 - is_nullable>>is_dynamic | 4 - size name | {size name} - name | 4 - number of type | {number of type}*8 - types
@@ -142,7 +142,7 @@ namespace bsdb::bodb {
             std::lock_guard lg(mutex_);
             unsigned long next_id = get_next_id();
             {
-                ptr_guard guard(*src);
+                index_ptr_guard guard(*src);
                 // TODO sprawdzić czy typy istnieją
                 src->ptr_to_end();
                 // 8 - index id | 1 - type | 4 - size name | {size name} - name | 8 - type_container
@@ -157,7 +157,7 @@ namespace bsdb::bodb {
             std::lock_guard lg(mutex_);
             unsigned long next_id = get_next_id();
             {
-                ptr_guard guard(*src);
+                index_ptr_guard guard(*src);
                 // TODO sprawdzić czy typy istnieją
                 src->ptr_to_end();
                 // TODO sprawdzić czy test już taki kontener
@@ -168,6 +168,9 @@ namespace bsdb::bodb {
                 src->write_obj(type_static);
             }
             return next_id;
+        };
+        void lazy_delete_n(const unsigned long &ptr,const long &n) {
+            src->lazy_delete_n(ptr,n);
         };
     };
 
