@@ -76,7 +76,7 @@ namespace bsdb {
         mutable std::mutex mutex_;
         std::vector<unsigned long> ptrs_;
 
-        void simple_shift_l_unsafe_thread(const unsigned long &ptr,const unsigned long &n,const unsigned long &size_buffer = 4096) {
+        void simple_shift_left_unsafe_thread(const unsigned long &ptr,const unsigned long &n,const unsigned long &size_buffer = 4096) {
             if(n == 0) return;
             char buffer[size_buffer];
             ptr_to_end(); // TODO ehhhhh deadlock
@@ -89,9 +89,11 @@ namespace bsdb {
 
         }
 
-        void shift_r_unsafe_thread(const unsigned long &ptr,const unsigned long &n,unsigned int size_buffer = 4096) {
+        void simple_shift_right_unsafe_thread(const unsigned long &ptr,const unsigned long &n,unsigned int size_buffer = 4096) {
             if(n == 0) return;
-            if(n > size_buffer) return shift_r_n_unsafe_thread(ptr,n);
+            if(n > size_buffer) return shift_right_n_unsafe_thread(ptr,n);
+            if (shift_right_if_n_exceeds_file_size_unsafe_thread(ptr,n)) return;
+
             char buffer[size_buffer];
 
             unsigned long size = get_size_unsafe_thread() - (ptr + n);
@@ -107,7 +109,8 @@ namespace bsdb {
             file_.read(buffer,size_buffer);
         }
 
-        void shift_r_n_unsafe_thread(const unsigned long &ptr,const unsigned long &n) { // TODO kiedy n jest wieksze od całego pliku
+        void shift_right_n_unsafe_thread(const unsigned long &ptr,const unsigned long &n) { // TODO kiedy n jest wieksze od całego pliku
+            if (shift_right_if_n_exceeds_file_size_unsafe_thread(ptr,n)) return;
             if(n == 0) return;
             char buffer[2][n];
             bool switch_buffer = false;
@@ -131,8 +134,20 @@ namespace bsdb {
             }
 
         }
-
-
+        bool shift_right_if_n_exceeds_file_size_unsafe_thread(const unsigned long &ptr,const unsigned long &n) {
+            const unsigned long size = get_size_unsafe_thread();
+            if (const unsigned long ptr_end = ptr + n; ptr_end > size) {
+                unsigned long diff = ptr_end - size;
+                char buffer[size];
+                set_ptr_unsafe_thread(0);
+                file_.read(buffer,size);
+                constexpr char nullChar = '\0';
+                file_.write(&nullChar, diff);
+                file_.write(buffer,size);
+                return true;
+            }else
+                return false;
+        }
         unsigned long get_size_unsafe_thread() {
             const auto streampos = file_.tellg();
             file_.seekg(0, std::ios::end);
@@ -233,7 +248,7 @@ namespace bsdb {
         };
         void lazy_delete_n(const unsigned long &ptr,const long &n) {
             std::lock_guard lock(mutex_);
-            shift_r_n_unsafe_thread(ptr,n);
+            shift_right_n_unsafe_thread(ptr,n);
         };
         void lazy_delete_(const unsigned long &ptr_start,const unsigned long &ptr_end) {
 

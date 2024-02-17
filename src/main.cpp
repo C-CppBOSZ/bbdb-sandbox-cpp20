@@ -1,19 +1,24 @@
 #include <algorithm>
+#include <array>
 #include <iostream>
 #include <map>
 #include <thread>
 #include <vector>
 #include <type_traits>
 
-#include "src/bsdb/bodb/bodb.h"
-#include "src/bsdb/bodb/scheme_b.h"
+#include "bsdb/bodb/bodb.h"
+#include "bsdb/bodb/scheme_b.h"
 
 
 int main() {
-    // bsdb::bodb::bodb bodb("/home/bogusz/CLionProjects/mainBSDB/test", "test");
-    auto bodb = bsdb::bodb::open_db_file("/home/bogusz/CLionProjects/mainBSDB/test", "test");
+
+
+    // bsdb::bodb::bodb bodb("/home/bogusz/CLionProjects/mainBSDB/test_db", "test_db");
+    // auto bodb = bsdb::bodb::open_db_file("/home/bogusz/CLionProjects/mainBSDB/test_db", "test_db");
     // bodb.add_simple_type(true,true,"int",4);
-    bodb.lazy_delete_n(0,8);
+    // bodb.lazy_delete_n(0,8);
+
+
 
     // auto fact = [&](int nu) {
     //     for (int i = 0; i < 10; i++) {

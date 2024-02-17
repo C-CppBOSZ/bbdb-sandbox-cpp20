@@ -1,5 +1,5 @@
 # db
-test/
+test_db/
 *.bsdb
 
 # Created by https://www.toptal.com/developers/gitignore/api/clion,c++,cmake

@@ -160,7 +160,7 @@ namespace bsdb::bodb {
                 index_ptr_guard guard(*src);
                 // TODO sprawdzić czy typy istnieją
                 src->ptr_to_end();
-                // TODO sprawdzić czy test już taki kontener
+                // TODO sprawdzić czy test_db już taki kontener
 
                 // 8 - index id | 1 - type | 4 - size name | {size name} - name | 8 - type_static | {obj(type_static)}
                 src->write_obj(next_id, scheme_b::static_b, static_cast<unsigned int>(name.size()));
