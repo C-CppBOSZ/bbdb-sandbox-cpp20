@@ -11,7 +11,7 @@
 
 
 int main() {
-
+    std::cout << "main";
 
     // bsdb::bodb::bodb bodb("/home/bogusz/CLionProjects/mainBSDB/test_db", "test_db");
     // auto bodb = bsdb::bodb::open_db_file("/home/bogusz/CLionProjects/mainBSDB/test_db", "test_db");
