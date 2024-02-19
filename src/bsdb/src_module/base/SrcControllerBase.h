@@ -5,15 +5,15 @@
 #ifndef SRCCONTROLLERBASE_H
 #define SRCCONTROLLERBASE_H
 #include "SrcProviderBase.h"
-#include "SrcQueryBase.h"
+#include "../guard/SrcQueryGuard.h"
 
 namespace bsdb::src_module::base {
-    template<typename DerivedQuery,typename Derived>
+    template<typename Derived>
     class SrcControllerBase : virtual public SrcProviderBase<Derived> {
     public:
         virtual ~SrcControllerBase() = default;
 
-        virtual SrcQueryBase<DerivedQuery,Derived> src_transaction() = 0;
+        virtual guard::SrcQueryGuard<Derived> src_transaction() = 0;
     };
 } // bsdb
 

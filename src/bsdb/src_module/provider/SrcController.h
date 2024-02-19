@@ -4,12 +4,11 @@
 
 #ifndef SRCCONTROLLER_H
 #define SRCCONTROLLER_H
-#include "SrcQuery.h"
 #include "../base/SrcControllerBase.h"
 
 namespace bsdb::src_module::provider {
-    template<typename DerivedQuery,typename Derived>
-    class SrcController : virtual public base::SrcControllerBase<DerivedQuery,Derived>{
+    template<typename Derived>
+    class SrcController : virtual public base::SrcControllerBase<Derived>{
         base::SrcProviderBase<Derived> * src_;
         mutable std::mutex mutex_;
 
@@ -65,11 +64,13 @@ namespace bsdb::src_module::provider {
         void lazy_delete_(const unsigned long &ptr_start, const unsigned long &ptr_end) override {
             std::lock_guard lg(mutex_);
             src_->lazy_delete_(ptr_start,ptr_end);
+        }
+
+        guard::SrcQueryGuard<Derived> src_transaction() override {
+            return guard::SrcQueryGuard<Derived>(mutex_,*src_);
         };
 
-        base::SrcQueryBase<DerivedQuery,Derived> src_transaction() override {
-            return provider::SrcQuery<DerivedQuery,Derived>(mutex_);
-        };
+
     };
 }
 
