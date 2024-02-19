@@ -7,7 +7,7 @@
 
 namespace bsdb::bodb {
 
-enum class scheme_b : unsigned char{
+enum class SchemeB : unsigned char{
     none, // -
     end, // -
     shifter, // -

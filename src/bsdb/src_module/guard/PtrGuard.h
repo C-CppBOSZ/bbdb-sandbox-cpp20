@@ -6,15 +6,15 @@
 #define PTR_PROVIDER_H
 #include <vector>
 
-namespace bsdb {
+namespace bsdb::src_module::guard {
 
-class ptr_guard {
+class PtrGuard {
 protected:
     std::vector<unsigned long>::iterator it;
     std::vector<unsigned long>* ptrs;
 public:
-    explicit ptr_guard(std::vector<unsigned long> *ptrs,const unsigned long &ptr);
-    ~ptr_guard();
+    explicit PtrGuard(std::vector<unsigned long> *ptrs,const unsigned long &ptr);
+    ~PtrGuard();
     unsigned long get() const;
 };
 

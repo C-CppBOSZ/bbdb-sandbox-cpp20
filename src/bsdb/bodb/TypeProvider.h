@@ -10,7 +10,7 @@
 
 namespace bsdb::bodb {
 
-class type_provider {
+class TypeProvider {
 private:
    // std::vector<unsigned long> struct_ptr;
    // size_t unstruct_ptr;

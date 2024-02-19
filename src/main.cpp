@@ -6,17 +6,23 @@
 #include <vector>
 #include <type_traits>
 
-#include "bsdb/bodb/bodb.h"
-#include "bsdb/bodb/scheme_b.h"
+#include "bsdb/bodb/Bodb.h"
+#include "bsdb/bodb/SchemeB.h"
+
+// BinarySchemaDB
+// BinSDB
+// bsdb
 
 
 int main() {
     std::cout << "main";
 
-    // bsdb::bodb::bodb bodb("/home/bogusz/CLionProjects/mainBSDB/test_db", "test_db");
-    // auto bodb = bsdb::bodb::open_db_file("/home/bogusz/CLionProjects/mainBSDB/test_db", "test_db");
-    // bodb.add_simple_type(true,true,"int",4);
-    // bodb.lazy_delete_n(0,8);
+
+
+    // bsdb::Bodb::Bodb Bodb("/home/bogusz/CLionProjects/mainBSDB/test_db", "test_db");
+    // auto Bodb = bsdb::Bodb::open_db_file("/home/bogusz/CLionProjects/mainBSDB/test_db", "test_db");
+    // Bodb.add_simple_type(true,true,"int",4);
+    // Bodb.lazy_delete_n(0,8);
 
 
 
@@ -24,7 +30,7 @@ int main() {
     //     for (int i = 0; i < 10; i++) {
     //         std::string n= "t"+ std::to_string(nu) + " --- i" + std::to_string(i) + "\n";
     //         std::cout << n;
-    //         bodb.add_simple_type(true,true,n,4);
+    //         Bodb.add_simple_type(true,true,n,4);
     //     }
     // };
     // std::vector<std::thread> tr = {};

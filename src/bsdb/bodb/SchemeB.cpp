@@ -2,7 +2,7 @@
 // Created by bogusz on 05.01.24.
 //
 
-#include "scheme_b.h"
+#include "SchemeB.h"
 
 namespace bsdb::bodb {
 

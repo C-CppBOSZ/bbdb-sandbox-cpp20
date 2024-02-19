@@ -4,23 +4,28 @@ project(mainBSDB)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(SOURCES
-        src/bsdb/bodb/bodb.cpp
-        src/bsdb/bodb/bodb.h
-        src/bsdb/bodb/type_provider.cpp
-        src/bsdb/bodb/type_provider.h
-        src/bsdb/bodb/scheme_b.cpp
-        src/bsdb/bodb/scheme_b.h
-        src/bsdb/src_provider.cpp
-        src/bsdb/src_provider.h
+        src/bsdb/bodb/Bodb.cpp
+        src/bsdb/bodb/Bodb.h
+        src/bsdb/bodb/TypeProvider.cpp
+        src/bsdb/bodb/TypeProvider.h
+        src/bsdb/bodb/SchemeB.cpp
+        src/bsdb/bodb/SchemeB.h
+        src/bsdb/src_module/base/SrcProviderBase.cpp
+        src/bsdb/src_module/base/SrcProviderBase.h
+        src/bsdb/src_module/provider/SrcProviderFile.cpp
+        src/bsdb/src_module/provider/SrcProviderFile.h
         src/huf/huf.h
-        src/bsdb/index_ptr_guard.cpp
-        src/bsdb/index_ptr_guard.h
-        src/bsdb/ptr_guard.cpp
-        src/bsdb/ptr_guard.h)
+        src/bsdb/src_module/guard/IndexPtrGuard.cpp
+        src/bsdb/src_module/guard/IndexPtrGuard.h
+        src/bsdb/src_module/guard/PtrGuard.cpp
+        src/bsdb/src_module/guard/PtrGuard.h
+        src/bsdb/src_module/base/SrcControllerBase.cpp
+        src/bsdb/src_module/base/SrcControllerBase.h)
 
 set(TESTS
         tests/test.cpp
-        tests/src_provider_impl_file_test.cpp)
+        tests/SrcProviderFileTest.cpp
+        )
 
 include(FetchContent)
 FetchContent_Declare(

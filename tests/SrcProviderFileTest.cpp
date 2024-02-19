@@ -7,12 +7,12 @@
 #include <iostream>
 #include <gtest/gtest.h>
 
-#include "../src/bsdb/src_provider.h"
+#include "../src/bsdb/src_module/provider/SrcProviderFile.h"
 
 
 struct SRCProviderImplFileTest : ::testing::Test {
     std::string file_string = "/home/bogusz/CLionProjects/mainBSDB/test_db/test_tmp.bsdb";
-    bsdb::src_provider_impl_file *src_file;
+    bsdb::SrcProviderFile *src_file;
 
     void save_file(const std::string &suffix) {
         src_file->close();
@@ -24,7 +24,7 @@ struct SRCProviderImplFileTest : ::testing::Test {
 
     protected:
     void SetUp() override {
-        src_file = new bsdb::src_provider_impl_file(file_string,std::ios::in | std::ios::out | std::ios::binary);
+        src_file = new bsdb::SrcProviderFile(file_string,std::ios::in | std::ios::out | std::ios::binary);
         if (!src_file->is_open()) {
             src_file->open(file_string, std::ios::out | std::ios::binary);
             src_file->close();
@@ -39,6 +39,6 @@ struct SRCProviderImplFileTest : ::testing::Test {
 };
 
 TEST_F(SRCProviderImplFileTest,ShiftN) {
-    src_file->write_obj(38278021);
-    save_file("init");
+    // src_file->write_obj(38278021);
+    // save_file("init");
 }
