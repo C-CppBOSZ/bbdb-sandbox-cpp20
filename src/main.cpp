@@ -13,9 +13,36 @@
 // BinSDB
 // bsdb
 
+template<typename Func>
+concept InvocableWithInt = requires(Func func, int i) {
+    { func(i) } -> std::convertible_to<int>;
+};
+
+template<InvocableWithInt Func>
+int invokeFun(Func func) {
+    int i = 4;
+    return func(i);
+}
+
+
+int fun1(int i) {
+
+}
+
+int fun2(long i) {
+
+}
+
+int fun3(std::string i) {
+
+}
 
 int main() {
     std::cout << "main";
+
+
+    invokeFun(fun1);
+    invokeFun(fun2);
 
 
 

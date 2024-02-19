@@ -20,7 +20,13 @@ set(SOURCES
         src/bsdb/src_module/guard/PtrGuard.cpp
         src/bsdb/src_module/guard/PtrGuard.h
         src/bsdb/src_module/base/SrcControllerBase.cpp
-        src/bsdb/src_module/base/SrcControllerBase.h)
+        src/bsdb/src_module/base/SrcControllerBase.h
+        src/bsdb/src_module/base/SrcQueryBase.cpp
+        src/bsdb/src_module/base/SrcQueryBase.h
+        src/bsdb/src_module/provider/SrcController.cpp
+        src/bsdb/src_module/provider/SrcController.h
+        src/bsdb/src_module/provider/SrcQuery.cpp
+        src/bsdb/src_module/provider/SrcQuery.h)
 
 set(TESTS
         tests/test.cpp
