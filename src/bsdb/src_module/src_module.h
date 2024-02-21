@@ -2,8 +2,8 @@
 // Created by bogusz on 21.02.24.
 //
 
-#ifndef INTERFACE_H
-#define INTERFACE_H
+#ifndef SRC_MODULE_H
+#define SRC_MODULE_H
 #include "base/SrcProviderBase.h"
 
 namespace bbdb {
@@ -15,4 +15,4 @@ namespace bbdb {
     }
 }
 
-#endif //INTERFACE_H
+#endif //SRC_MODULE_H

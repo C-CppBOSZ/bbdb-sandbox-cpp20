@@ -8,10 +8,16 @@
 #include "../base/SrcProviderBase.h"
 
 namespace bbdb::src_module::guard {
-    template<typename Func, typename Derived>
-    concept FuncQuery = requires(Func func, base::SrcProviderBase<Derived> &s)
+    template<typename Func, typename Derived,typename... OtherArgs>
+    concept FuncQuery = requires(Func func, base::SrcProviderBase<Derived> &s,OtherArgs... other_args)
     {
-        { func(s) };
+        { func(s,other_args...) };
+    };
+
+    template<typename Func, typename Derived,typename ReturnType, typename... OtherArgs>
+   concept FactoryQuery = requires(Func func, base::SrcProviderBase<Derived> &s,OtherArgs... other_args)
+    {
+        { func(s,other_args...) } -> std::convertible_to<ReturnType>;
     };
 
     template<typename Derived>
@@ -24,9 +30,15 @@ namespace bbdb::src_module::guard {
             : lg_(mutex) ,src_(src) {
         }
 
-        template<FuncQuery<Derived> Func>
-        SrcQueryGuard<Derived> &fun(Func func) {
-            func(src_);
+        template<typename... OtherArgs,FuncQuery<Derived,OtherArgs...> Func>
+        SrcQueryGuard<Derived> &function(Func func,OtherArgs... other_args) {
+            func(src_,other_args...);
+            return *this;
+        };
+
+        template<typename ReturnType,typename... OtherArgs,FactoryQuery<Derived,ReturnType,OtherArgs...> Func>
+        SrcQueryGuard<Derived> &factory(ReturnType & return_,Func func,OtherArgs... other_args) {
+            return_ = func(src_,other_args...);
             return *this;
         };
     };

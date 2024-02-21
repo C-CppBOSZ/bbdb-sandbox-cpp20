@@ -25,7 +25,8 @@ set(SOURCES
         src/bsdb/src_module/impl/SrcTransaction.h
         src/bsdb/src_module/guard/SrcQueryGuard.cpp
         src/bsdb/src_module/guard/SrcQueryGuard.h
-        src/bsdb/src_module/interface.h)
+        src/bsdb/src_module/interface.h
+        src/bsdb/src_module/src_module.h)
 
 set(TESTS
         tests/test.cpp

@@ -43,16 +43,19 @@ TEST_F(SRCProviderImplFileTest,ShiftN) {
 
     bbdb::src_module::impl::SrcTransaction<bbdb::src_module::impl::SrcProviderFile> controller(src_file);
     {
+        int t = 0;
         auto query = controller.src_transaction();
-        query.fun([](auto &s) {
-            s.write_obj(12309202);
-        }).fun([](auto &s) {
-            s.write_obj(12309202);
-        });
-        query.fun([](auto &s) {
-            s.write_obj(0);
-        });
+        query.function([](auto &s,auto u) {
+            s.write_obj(12309202+u);
+        },68768).factory(t,[](auto &s,auto i,auto i2) {
+            s.shift_ptr(-4);
+            int tmp = 0;
+            s.read_obj(tmp);
+            return tmp + i + i2;
+        },8,9);
+        std::cout << t;
     }
-    controller.write_obj(0);
+    int po = 0;
+    controller.write_obj(po);
     save_file("init");
 }
