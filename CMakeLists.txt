@@ -19,17 +19,19 @@ set(SOURCES
         src/bsdb/src_module/guard/IndexPtrGuard.h
         src/bsdb/src_module/guard/PtrGuard.cpp
         src/bsdb/src_module/guard/PtrGuard.h
-        src/bsdb/src_module/base/SrcControllerBase.cpp
-        src/bsdb/src_module/base/SrcControllerBase.h
-        src/bsdb/src_module/impl/SrcController.cpp
-        src/bsdb/src_module/impl/SrcController.h
+        src/bsdb/src_module/base/SrcTransactionBase.cpp
+        src/bsdb/src_module/base/SrcTransactionBase.h
+        src/bsdb/src_module/impl/SrcTransaction.cpp
+        src/bsdb/src_module/impl/SrcTransaction.h
         src/bsdb/src_module/guard/SrcQueryGuard.cpp
-        src/bsdb/src_module/guard/SrcQueryGuard.h)
+        src/bsdb/src_module/guard/SrcQueryGuard.h
+        src/bsdb/src_module/interface.h)
 
 set(TESTS
         tests/test.cpp
         tests/SrcProviderFileTest.cpp
-        )
+        src/bsdb/src_module/interface.h
+)
 
 include(FetchContent)
 FetchContent_Declare(

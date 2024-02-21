@@ -7,7 +7,7 @@
 #include <iostream>
 #include <gtest/gtest.h>
 
-#include "../src/bsdb/src_module/impl/SrcController.h"
+#include "../src/bsdb/src_module/impl/SrcTransaction.h"
 #include "../src/bsdb/src_module/impl/SrcProviderFile.h"
 
 
@@ -41,7 +41,7 @@ struct SRCProviderImplFileTest : ::testing::Test {
 
 TEST_F(SRCProviderImplFileTest,ShiftN) {
 
-    bbdb::src_module::impl::SrcController<bbdb::src_module::impl::SrcProviderFile> controller(src_file);
+    bbdb::src_module::impl::SrcTransaction<bbdb::src_module::impl::SrcProviderFile> controller(src_file);
     {
         auto query = controller.src_transaction();
         query.fun([](auto &s) {

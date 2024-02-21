@@ -9,9 +9,9 @@
 
 namespace bbdb::src_module::base {
     template<typename Derived>
-    class SrcControllerBase : virtual public SrcProviderBase<SrcControllerBase<Derived>> {
+    class SrcTransactionBase : virtual public SrcProviderBase<SrcTransactionBase<Derived>> {
     public:
-        virtual ~SrcControllerBase() = default;
+        virtual ~SrcTransactionBase() = default;
 
         virtual guard::SrcQueryGuard<Derived> src_transaction() = 0;
     };

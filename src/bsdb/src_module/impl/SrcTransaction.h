@@ -4,20 +4,20 @@
 
 #ifndef SRCCONTROLLER_H
 #define SRCCONTROLLER_H
-#include "../base/SrcControllerBase.h"
+#include "../base/SrcTransactionBase.h"
 
 namespace bbdb::src_module::impl {
     template<typename Derived>
-    class SrcController : virtual public base::SrcControllerBase<Derived> {
+    class SrcTransaction : virtual public base::SrcTransactionBase<Derived> {
         base::SrcProviderBase<Derived> *src_;
         mutable std::mutex mutex_;
 
     public:
-        explicit SrcController(base::SrcProviderBase<Derived> *src)
+        explicit SrcTransaction(base::SrcProviderBase<Derived> *src)
             : src_(src) {
         }
 
-        ~SrcController() {
+        ~SrcTransaction() {
             std::lock_guard lg(mutex_);
         };
 
