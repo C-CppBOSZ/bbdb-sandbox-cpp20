@@ -11,7 +11,10 @@
 
 // BinarySchemaDB
 // BinSDB
-// bsdb
+
+
+// BinaryBlueprintDB
+// bbdb
 
 
 int main() {
@@ -21,8 +24,8 @@ int main() {
 
 
 
-    // bsdb::Bodb::Bodb Bodb("/home/bogusz/CLionProjects/mainBSDB/test_db", "test_db");
-    // auto Bodb = bsdb::Bodb::open_db_file("/home/bogusz/CLionProjects/mainBSDB/test_db", "test_db");
+    // bbdb::Bodb::Bodb Bodb("/home/bogusz/CLionProjects/mainBSDB/test_db", "test_db");
+    // auto Bodb = bbdb::Bodb::open_db_file("/home/bogusz/CLionProjects/mainBSDB/test_db", "test_db");
     // Bodb.add_simple_type(true,true,"int",4);
     // Bodb.lazy_delete_n(0,8);
 

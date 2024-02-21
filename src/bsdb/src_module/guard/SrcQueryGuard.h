@@ -7,7 +7,7 @@
 
 #include "../base/SrcProviderBase.h"
 
-namespace bsdb::src_module::guard {
+namespace bbdb::src_module::guard {
     template<typename Func, typename Derived>
     concept FuncQuery = requires(Func func, base::SrcProviderBase<Derived> &s)
     {
@@ -30,6 +30,6 @@ namespace bsdb::src_module::guard {
             return *this;
         };
     };
-} // bsdb
+} // bbdb
 
 #endif //SRCQUERYGUARD_H

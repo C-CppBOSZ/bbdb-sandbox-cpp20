@@ -4,5 +4,5 @@
 
 #include "IndexPtrGuard.h"
 
-namespace bsdb::src_module::guard {
-} // bsdb
+namespace bbdb::src_module::guard {
+} // bbdb

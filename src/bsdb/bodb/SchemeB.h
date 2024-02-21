@@ -5,7 +5,7 @@
 #ifndef TYPE_M_H
 #define TYPE_M_H
 
-namespace bsdb::bodb {
+namespace bbdb::bodb {
 
 enum class SchemeB : unsigned char{
     none, // -

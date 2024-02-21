@@ -4,6 +4,6 @@
 
 #include "TypeProvider.h"
 
-namespace bsdb::bodb {
+namespace bbdb::bodb {
 
 }

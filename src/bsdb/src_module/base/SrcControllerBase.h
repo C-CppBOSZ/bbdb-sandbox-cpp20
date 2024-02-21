@@ -7,7 +7,7 @@
 #include "SrcProviderBase.h"
 #include "../guard/SrcQueryGuard.h"
 
-namespace bsdb::src_module::base {
+namespace bbdb::src_module::base {
     template<typename Derived>
     class SrcControllerBase : virtual public SrcProviderBase<SrcControllerBase<Derived>> {
     public:
@@ -15,6 +15,6 @@ namespace bsdb::src_module::base {
 
         virtual guard::SrcQueryGuard<Derived> src_transaction() = 0;
     };
-} // bsdb
+} // bbdb
 
 #endif //SRCCONTROLLERBASE_H

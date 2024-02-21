@@ -6,7 +6,7 @@
 #define PTR_PROVIDER_H
 #include <vector>
 
-namespace bsdb::src_module::guard {
+namespace bbdb::src_module::guard {
 
 class PtrGuard {
 protected:
@@ -18,6 +18,6 @@ public:
     unsigned long get() const;
 };
 
-} // bsdb
+} // bbdb
 
 #endif //PTR_PROVIDER_H

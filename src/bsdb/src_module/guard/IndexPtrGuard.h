@@ -6,7 +6,7 @@
 #define PTR_GUARD_H
 #include "../base/SrcProviderBase.h"
 
-namespace bsdb::src_module::guard {
+namespace bbdb::src_module::guard {
 template<typename Derived>
 class [[deprecated("unsafe thread")]] IndexPtrGuard {
 private:
@@ -38,6 +38,6 @@ public:
     };
 };
 
-} // bsdb
+} // bbdb
 
 #endif //PTR_GUARD_H

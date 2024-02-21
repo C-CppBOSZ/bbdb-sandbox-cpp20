@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace bsdb::bodb {
+namespace bbdb::bodb {
 
 class TypeProvider {
 private:

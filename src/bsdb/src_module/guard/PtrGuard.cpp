@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-namespace bsdb::src_module::guard {
+namespace bbdb::src_module::guard {
     PtrGuard::PtrGuard(std::vector<unsigned long> *ptrs,const unsigned long &ptr): ptrs(ptrs) {
         ptrs->push_back(ptr);
         it=--ptrs->end();
@@ -20,4 +20,4 @@ namespace bsdb::src_module::guard {
         return *it;
     }
 
-} // bsdb
+} // bbdb

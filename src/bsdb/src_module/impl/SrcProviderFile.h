@@ -13,7 +13,7 @@
 #include "../base/SrcProviderBase.h"
 #include "../guard/PtrGuard.h"
 
-namespace bsdb::src_module::impl {
+namespace bbdb::src_module::impl {
   class SrcProviderFile : virtual public base::SrcProviderBase<SrcProviderFile> {
     private:
         std::fstream file_;

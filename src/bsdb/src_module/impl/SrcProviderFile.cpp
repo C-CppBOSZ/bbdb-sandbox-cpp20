@@ -4,7 +4,7 @@
 
 #include "SrcProviderFile.h"
 
-namespace bsdb::src_module::impl {
+namespace bbdb::src_module::impl {
     SrcProviderFile::SrcProviderFile(const std::string &path, std::ios_base::openmode mode): file_(path, mode) {}
 
     SrcProviderFile::~SrcProviderFile() = default;
@@ -49,4 +49,4 @@ namespace bsdb::src_module::impl {
         std::lock_guard lock(mutex_);
         shift_ptr_unsafe_thread(shift);
     }
-} // bsdb
+} // bbdb

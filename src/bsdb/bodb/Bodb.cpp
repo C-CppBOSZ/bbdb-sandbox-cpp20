@@ -9,9 +9,9 @@
 
 #include "SchemeB.h"
 
-namespace bsdb::bodb {
+namespace bbdb::bodb {
     // Bodb::Bodb(const std::filesystem::path &db_path, const std::string &name) {
-    //     std::string path = db_path / (name + ".bsdb");
+    //     std::string path = db_path / (name + ".bbdb");
     //
     //     const auto _src = new SrcProviderFile(path,std::ios::in | std::ios::out | std::ios::binary);
     //
@@ -80,7 +80,7 @@ namespace bsdb::bodb {
     //     src->set_ptr(ptr);
     // }
     Bodb<src_module::impl::SrcProviderFile> open_db_file(const std::filesystem::path &db_path, const std::string &name) {
-        std::string path = db_path / (name + ".bsdb");
+        std::string path = db_path / (name + ".bbdb");
 
         const auto _src = new src_module::impl::SrcProviderFile(path, std::ios::in | std::ios::out | std::ios::binary);
 
@@ -100,4 +100,4 @@ namespace bsdb::bodb {
 
         return static_cast<Bodb<src_module::impl::SrcProviderFile>>(_src);
     }
-} // bsdb
+} // bbdb

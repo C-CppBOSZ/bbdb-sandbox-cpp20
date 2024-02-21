@@ -13,7 +13,7 @@
 #include "../src_module/base/SrcProviderBase.h"
 #include "SchemeB.h"
 
-namespace bsdb::bodb {
+namespace bbdb::bodb {
     template<typename SRC_PROVIDER>
     class Bodb {
     private:

@@ -12,12 +12,12 @@
 
 
 struct SRCProviderImplFileTest : ::testing::Test {
-    std::string file_string = "/home/bogusz/CLionProjects/mainBSDB/test_db/test_tmp.bsdb";
-    bsdb::src_module::impl::SrcProviderFile *src_file;
+    std::string file_string = "/home/bogusz/CLionProjects/mainBSDB/test_db/test_tmp.bbdb";
+    bbdb::src_module::impl::SrcProviderFile *src_file;
 
     void save_file(const std::string &suffix) {
         src_file->close();
-        const auto to = file_string+"@"+suffix+".bsdb";
+        const auto to = file_string+"@"+suffix+".bbdb";
         std::remove(to.c_str());
         std::filesystem::copy(file_string,to);
         src_file->open(file_string, std::ios::in | std::ios::out | std::ios::binary);
@@ -25,7 +25,7 @@ struct SRCProviderImplFileTest : ::testing::Test {
 
     protected:
     void SetUp() override {
-        src_file = new bsdb::src_module::impl::SrcProviderFile(file_string,std::ios::in | std::ios::out | std::ios::binary);
+        src_file = new bbdb::src_module::impl::SrcProviderFile(file_string,std::ios::in | std::ios::out | std::ios::binary);
         if (!src_file->is_open()) {
             src_file->open(file_string, std::ios::out | std::ios::binary);
             src_file->close();
@@ -41,7 +41,7 @@ struct SRCProviderImplFileTest : ::testing::Test {
 
 TEST_F(SRCProviderImplFileTest,ShiftN) {
 
-    bsdb::src_module::impl::SrcController<bsdb::src_module::impl::SrcProviderFile> controller(src_file);
+    bbdb::src_module::impl::SrcController<bbdb::src_module::impl::SrcProviderFile> controller(src_file);
     {
         auto query = controller.src_transaction();
         query.fun([](auto &s) {

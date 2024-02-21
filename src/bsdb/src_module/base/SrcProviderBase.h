@@ -11,7 +11,7 @@
 
 #include "../guard/PtrGuard.h"
 
-namespace bsdb::src_module::base {
+namespace bbdb::src_module::base {
     template<typename T>
     concept contaner_out = requires(T a)
     {
@@ -70,6 +70,6 @@ namespace bsdb::src_module::base {
 
 
 
-} // bsdb
+} // bbdb
 
 #endif //SRC_PROVIDER_H
