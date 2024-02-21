@@ -4,7 +4,7 @@
 
 #include "SrcProviderFile.h"
 
-namespace bsdb::src_module::provider {
+namespace bsdb::src_module::impl {
     SrcProviderFile::SrcProviderFile(const std::string &path, std::ios_base::openmode mode): file_(path, mode) {}
 
     SrcProviderFile::~SrcProviderFile() = default;

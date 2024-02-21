@@ -12,8 +12,8 @@ set(SOURCES
         src/bsdb/bodb/SchemeB.h
         src/bsdb/src_module/base/SrcProviderBase.cpp
         src/bsdb/src_module/base/SrcProviderBase.h
-        src/bsdb/src_module/provider/SrcProviderFile.cpp
-        src/bsdb/src_module/provider/SrcProviderFile.h
+        src/bsdb/src_module/impl/SrcProviderFile.cpp
+        src/bsdb/src_module/impl/SrcProviderFile.h
         src/huf/huf.h
         src/bsdb/src_module/guard/IndexPtrGuard.cpp
         src/bsdb/src_module/guard/IndexPtrGuard.h
@@ -21,8 +21,8 @@ set(SOURCES
         src/bsdb/src_module/guard/PtrGuard.h
         src/bsdb/src_module/base/SrcControllerBase.cpp
         src/bsdb/src_module/base/SrcControllerBase.h
-        src/bsdb/src_module/provider/SrcController.cpp
-        src/bsdb/src_module/provider/SrcController.h
+        src/bsdb/src_module/impl/SrcController.cpp
+        src/bsdb/src_module/impl/SrcController.h
         src/bsdb/src_module/guard/SrcQueryGuard.cpp
         src/bsdb/src_module/guard/SrcQueryGuard.h)
 

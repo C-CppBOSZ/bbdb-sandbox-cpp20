@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "../src_module/guard/IndexPtrGuard.h"
-#include "../src_module/provider/SrcProviderFile.h"
+#include "../src_module/impl/SrcProviderFile.h"
 #include "../src_module/base/SrcProviderBase.h"
 #include "SchemeB.h"
 
@@ -178,7 +178,7 @@ namespace bsdb::bodb {
 
 
 
-    Bodb<src_module::provider::SrcProviderFile> open_db_file(const std::filesystem::path &db_path, const std::string &name);
+    Bodb<src_module::impl::SrcProviderFile> open_db_file(const std::filesystem::path &db_path, const std::string &name);
 }
 
 

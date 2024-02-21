@@ -6,7 +6,7 @@
 #define SRCCONTROLLER_H
 #include "../base/SrcControllerBase.h"
 
-namespace bsdb::src_module::provider {
+namespace bsdb::src_module::impl {
     template<typename Derived>
     class SrcController : virtual public base::SrcControllerBase<Derived> {
         base::SrcProviderBase<Derived> *src_;
