@@ -27,7 +27,7 @@ namespace bsdb::src_module::guard {
         template<FuncQuery<Derived> Func>
         SrcQueryGuard<Derived> &fun(Func func) {
             func(src_);
-            return this;
+            return *this;
         };
     };
 } // bsdb

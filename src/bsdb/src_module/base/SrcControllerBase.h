@@ -9,7 +9,7 @@
 
 namespace bsdb::src_module::base {
     template<typename Derived>
-    class SrcControllerBase : virtual public SrcProviderBase<Derived> {
+    class SrcControllerBase : virtual public SrcProviderBase<SrcControllerBase<Derived>> {
     public:
         virtual ~SrcControllerBase() = default;
 

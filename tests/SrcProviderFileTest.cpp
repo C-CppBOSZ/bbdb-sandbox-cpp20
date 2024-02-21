@@ -7,12 +7,13 @@
 #include <iostream>
 #include <gtest/gtest.h>
 
+#include "../src/bsdb/src_module/provider/SrcController.h"
 #include "../src/bsdb/src_module/provider/SrcProviderFile.h"
 
 
 struct SRCProviderImplFileTest : ::testing::Test {
     std::string file_string = "/home/bogusz/CLionProjects/mainBSDB/test_db/test_tmp.bsdb";
-    bsdb::SrcProviderFile *src_file;
+    bsdb::src_module::provider::SrcProviderFile *src_file;
 
     void save_file(const std::string &suffix) {
         src_file->close();
@@ -24,7 +25,7 @@ struct SRCProviderImplFileTest : ::testing::Test {
 
     protected:
     void SetUp() override {
-        src_file = new bsdb::SrcProviderFile(file_string,std::ios::in | std::ios::out | std::ios::binary);
+        src_file = new bsdb::src_module::provider::SrcProviderFile(file_string,std::ios::in | std::ios::out | std::ios::binary);
         if (!src_file->is_open()) {
             src_file->open(file_string, std::ios::out | std::ios::binary);
             src_file->close();
@@ -39,6 +40,19 @@ struct SRCProviderImplFileTest : ::testing::Test {
 };
 
 TEST_F(SRCProviderImplFileTest,ShiftN) {
-    // src_file->write_obj(38278021);
-    // save_file("init");
+
+    bsdb::src_module::provider::SrcController<bsdb::src_module::provider::SrcProviderFile> controller(src_file);
+    {
+        auto query = controller.src_transaction();
+        query.fun([](auto &s) {
+            s.write_obj(12309202);
+        }).fun([](auto &s) {
+            s.write_obj(12309202);
+        });
+        query.fun([](auto &s) {
+            s.write_obj(0);
+        });
+    }
+    controller.write_obj(0);
+    save_file("init");
 }
