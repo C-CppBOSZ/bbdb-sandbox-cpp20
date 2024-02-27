@@ -70,12 +70,26 @@ namespace bbdb::src_module::impl {
             while (!file_.eof()) {
                 // TODO + size_buffer + content_size
                 if (unsigned long size_to_end = get_ptr_unsafe_thread();size_to_end  + size_buffer + content_size >= size ) {
-                    size_to_end = size - size_to_end;
                     shift_ptr_unsafe_thread(-static_cast<long>(size_buffer));
                     file_.write(buffer,size_buffer);
-                    file_.read(buffer,size_to_end);
-                    shift_ptr_unsafe_thread(-static_cast<long>(size_to_end - content_size));
-                    file_.write(buffer,size_to_end);
+
+                    size_to_end = size - size_to_end;
+                    if (size_buffer >= size_to_end) {
+                        file_.read(buffer,size_to_end);
+                        shift_ptr_unsafe_thread(-static_cast<long>(size_to_end));
+                        file_.write(content,content_size);
+                        file_.write(buffer,size_to_end);
+                    }else {
+                        file_.read(buffer,size_buffer);
+                        shift_ptr_unsafe_thread(-static_cast<long>(size_buffer));
+                        file_.write(content,content_size);
+                        shift_ptr_unsafe_thread(static_cast<long>(size_buffer-content_size));
+                        size_to_end = size_to_end - size_buffer;
+                        file_.read(content,size_to_end);
+                        shift_ptr_unsafe_thread(-static_cast<long>(size_to_end + size_buffer - content_size));
+                        file_.write(buffer,size_buffer);
+                        file_.write(content,size_to_end);
+                    }
                     break;
                 }
                 shift_ptr_unsafe_thread(-static_cast<long>(size_buffer));
