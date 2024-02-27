@@ -32,8 +32,20 @@ namespace bbdb::src_module::base {
         virtual void set_ptr(const unsigned long &ptr) = 0;
 
         virtual void ptr_to_end() = 0;
+        // TODO virtual ?
+        void shift_ptr(const unsigned long &shift) = delete;
 
         virtual void shift_ptr(const long &shift) = 0;
+
+        virtual void simple_shift_left_content(const unsigned long &ptr,const unsigned long &content_size,const unsigned long &size_buffer = 4096) = 0;
+
+        virtual void simple_shift_right_content(const unsigned long &ptr,const unsigned long &content_size,const unsigned long &size_buffer = 4096) = 0;
+
+        virtual void delete_n(const unsigned long &ptr,const long &n) = 0;
+        virtual void delete_(const unsigned long &ptr_start,const unsigned long &ptr_end) = 0;
+
+        virtual void lazy_delete_n(const unsigned long &ptr,const long &n) = 0;
+        virtual void lazy_delete_(const unsigned long &ptr_start,const unsigned long &ptr_end) = 0;
 
         template<typename... Args>
         unsigned int write_obj(const Args &... args) {
@@ -60,11 +72,7 @@ namespace bbdb::src_module::base {
             return dynamic_cast<Derived*>(this)->template insert_container(args...);
         };
 
-        virtual void delete_n(const unsigned long &ptr,const long &n) = 0;
-        virtual void delete_(const unsigned long &ptr_start,const unsigned long &ptr_end) = 0;
 
-        virtual void lazy_delete_n(const unsigned long &ptr,const long &n) = 0;
-        virtual void lazy_delete_(const unsigned long &ptr_start,const unsigned long &ptr_end) = 0;
     };
 
 

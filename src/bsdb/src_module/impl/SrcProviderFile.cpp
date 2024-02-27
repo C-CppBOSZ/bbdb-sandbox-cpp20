@@ -26,7 +26,7 @@ namespace bbdb::src_module::impl {
 
     unsigned long SrcProviderFile::get_ptr() {
         std::lock_guard lock(mutex_);
-        return file_.tellg();
+        return get_ptr_unsafe_thread();
     }
 
     guard::PtrGuard SrcProviderFile::push_ptr() {

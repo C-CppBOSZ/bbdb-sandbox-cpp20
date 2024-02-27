@@ -17,15 +17,18 @@ struct SRCProviderImplFileTest : ::testing::Test {
 
     void save_file(const std::string &suffix) {
         src_file->close();
-        const auto to = file_string+"@"+suffix+".bbdb";
+        const auto to = file_string + "@" + suffix + ".bbdb";
         std::remove(to.c_str());
-        std::filesystem::copy(file_string,to);
+        std::filesystem::copy(file_string, to);
         src_file->open(file_string, std::ios::in | std::ios::out | std::ios::binary);
     }
 
-    protected:
+protected:
     void SetUp() override {
-        src_file = new bbdb::src_module::impl::SrcProviderFile(file_string,std::ios::in | std::ios::out | std::ios::binary);
+        std::remove(file_string.c_str());
+
+        src_file = new bbdb::src_module::impl::SrcProviderFile(file_string,
+                                                               std::ios::in | std::ios::out | std::ios::binary);
         if (!src_file->is_open()) {
             src_file->open(file_string, std::ios::out | std::ios::binary);
             src_file->close();
@@ -35,27 +38,47 @@ struct SRCProviderImplFileTest : ::testing::Test {
 
     void TearDown() override {
         delete src_file;
-        std::remove(file_string.c_str());
+        // std::remove(file_string.c_str());
     };
 };
 
-TEST_F(SRCProviderImplFileTest,ShiftN) {
+TEST_F(SRCProviderImplFileTest, ShiftRight) {
+    src_file->write_obj(1234);
+    src_file->simple_shift_right_content(0,3);
+    const int ptr = src_file->get_ptr();
+    src_file->shift_ptr(3);
+    int tmp = 0;
+    src_file->read_obj(tmp);
+    EXPECT_EQ(ptr,0);
+    EXPECT_EQ(tmp,1234);
+    // save_file("ShiftRigth");
+}
 
-    bbdb::src_module::impl::SrcTransaction<bbdb::src_module::impl::SrcProviderFile> controller(src_file);
-    {
-        int t = 0;
-        auto query = controller.src_transaction();
-        query.function([](auto &s,auto u) {
-            s.write_obj(12309202+u);
-        },68768).factory(t,[](auto &s,auto i,auto i2) {
-            s.shift_ptr(-4);
-            int tmp = 0;
-            s.read_obj(tmp);
-            return tmp + i + i2;
-        },8,9);
-        std::cout << t;
+TEST_F(SRCProviderImplFileTest, ShiftRight2) {
+    int tab[]       = {1,2,3,4,    5,6,7,8,910,11,12,13,14,15};
+    int tab_out[]   = {1,2,3,4,0,0,5,6,7,8,9,10,11,12,13,14,15}; // 18
+    //                                               14 15
+    constexpr int shiftIndex1 = (9*4);
+    constexpr int shiftIndex2 = (4*4);
+    src_file->write_obj(tab);
+    save_file("ShiftRigth2-1");
+
+    src_file->simple_shift_right_content(shiftIndex1,4,10);
+    src_file->simple_shift_right_content(shiftIndex2,8,10);
+
+    unsigned long size = 0;
+    // TODO get size trzeba dodać
+    src_file->ptr_to_end();
+    size = src_file->get_ptr();
+    EXPECT_EQ(size,(15*4+12));
+
+    src_file->set_ptr(0);
+    for (int i = 0; i < 18; ++i) {
+        int tmp = 0;
+        src_file->read_obj(tmp);
+        if (tab_out[i] != 0)
+        EXPECT_EQ(tmp,tab_out[i]);
     }
-    int po = 0;
-    controller.write_obj(po);
-    save_file("init");
+
+    save_file("ShiftRigth2-2");
 }
