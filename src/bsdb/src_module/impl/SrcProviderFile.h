@@ -9,7 +9,7 @@
 #include <mutex>
 #include <thread>
 #include <vector>
-#include <cstring>
+#include <filesystem>
 
 #include "../base/SrcProviderBase.h"
 #include "../guard/PtrGuard.h"
@@ -18,20 +18,35 @@ namespace bbdb::src_module::impl {
     class SrcProviderFile : virtual public base::SrcProviderBase<SrcProviderFile> {
     private:
         std::fstream file_;
+        std::filesystem::path path_;
         mutable std::mutex mutex_;
         std::vector<unsigned long> ptrs_;
 
         void simple_shift_left_content_unsafe_thread(const unsigned long &ptr, const unsigned long &content_size,
                                                      const unsigned long &size_buffer = 4096) {
-            if (content_size == 0) return;
-            char buffer[size_buffer];
-            ptr_to_end(); // TODO ehhhhh deadlock
-            unsigned long ptr_end = get_ptr();
-            unsigned long size = ptr_end - ptr;
-            unsigned int n_shift = size / size_buffer;
-            set_ptr(ptr); // TODO ehhhhh deadlock
+            const auto size = get_size_unsafe_thread();
+            if (ptr > size) {
+                std::cerr << "simple_shift_left_content_unsafe_thread error ptr > ptr_end";
+                throw std::runtime_error("simple_left_right_content_unsafe_thread error ptr > ptr_end");
+            }
+            if (size < content_size) {
+                // std::filesystem::resize_file(file_,ptr);
+                ptr_to_end_unsafe_thread();
+                return;
+            }
+            set_ptr_unsafe_thread(ptr);
+            if (const unsigned long diff = size - ptr; diff >= size_buffer) {
+                char buffer[diff];
+                file_.read(buffer,diff);
+                shift_ptr_unsafe_thread(-static_cast<long>(diff + content_size));
+                file_.write(buffer,diff);
 
-            file_.read(buffer, size_buffer);
+                // std::filesystem::resize_file(file_,size-content_size);
+                set_ptr_unsafe_thread(ptr);
+                return;
+            }
+
+            set_ptr_unsafe_thread(ptr);
         }
 
         void simple_shift_right_content_unsafe_thread(const unsigned long &ptr, const unsigned long &size_content,
@@ -42,7 +57,7 @@ namespace bbdb::src_module::impl {
                 std::cerr << "simple_shift_right_content_unsafe_thread error ptr > ptr_end";
                 throw std::runtime_error("simple_shift_right_content_unsafe_thread error ptr > ptr_end");
             }
-            if (const unsigned long diff = ptr_end - ptr; diff < size_buffer) {
+            if (const unsigned long diff = ptr_end - ptr; diff <= size_buffer) {
                 shift_ptr_unsafe_thread(-static_cast<long>(diff));
                 char buffer[diff];
                 file_.read(buffer,diff);
@@ -69,8 +84,6 @@ namespace bbdb::src_module::impl {
             }
             set_ptr_unsafe_thread(ptr);
         }
-
-
 
         unsigned long get_size_unsafe_thread() {
             const auto streampos = get_ptr_unsafe_thread();
@@ -106,11 +119,11 @@ namespace bbdb::src_module::impl {
         }
 
     public:
-        explicit SrcProviderFile(const std::string &path, std::ios_base::openmode mode);
+        explicit SrcProviderFile(const std::filesystem::path &path, std::ios_base::openmode mode);
 
         ~SrcProviderFile() override;
 
-        void open(const std::string &path, std::ios_base::openmode mode);
+        void open(const std::filesystem::path &path, std::ios_base::openmode mode);
 
         void close();
 

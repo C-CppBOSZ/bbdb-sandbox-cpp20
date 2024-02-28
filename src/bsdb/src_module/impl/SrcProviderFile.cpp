@@ -5,12 +5,13 @@
 #include "SrcProviderFile.h"
 
 namespace bbdb::src_module::impl {
-    SrcProviderFile::SrcProviderFile(const std::string &path, std::ios_base::openmode mode): file_(path, mode) {}
+    SrcProviderFile::SrcProviderFile(const std::filesystem::path &path, std::ios_base::openmode mode): file_(path, mode), path_(path) {}
 
     SrcProviderFile::~SrcProviderFile() = default;
 
-    void SrcProviderFile::open(const std::string &path, std::ios_base::openmode mode) {
+    void SrcProviderFile::open(const std::filesystem::path &path, std::ios_base::openmode mode) {
         std::lock_guard lock(mutex_);
+        path_ = path;
         file_.open(path, mode);
     }
 

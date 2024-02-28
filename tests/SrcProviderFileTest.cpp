@@ -28,7 +28,7 @@ protected:
         std::remove(file_string.c_str());
 
         src_file = new bbdb::src_module::impl::SrcProviderFile(file_string,
-                                                               std::ios::in | std::ios::out | std::ios::binary);
+                                                               std::ios::in | std::ios::out | std::ios::binary );
         if (!src_file->is_open()) {
             src_file->open(file_string, std::ios::out | std::ios::binary);
             src_file->close();
@@ -59,7 +59,7 @@ TEST_F(SRCProviderImplFileTest, ShiftRight2) {
     int tab_out[]   = {1,2,3,4,0,0,5,6,7,8,9,0,10,11,12,13,14,15}; // 18
 
     src_file->write_obj(tab);
-    save_file("ShiftRigth2-1");
+    // save_file("ShiftRigth2-1");
 
     src_file->simple_shift_right_content(4*4,8,10);
     src_file->simple_shift_right_content(10*4,4,10);
@@ -78,5 +78,17 @@ TEST_F(SRCProviderImplFileTest, ShiftRight2) {
         EXPECT_EQ(tmp,tab_out[i]);
     }
 
-    save_file("ShiftRigth2-2");
+    // save_file("ShiftRigth2-2");
+}
+
+TEST_F(SRCProviderImplFileTest, ShiftLeft) {
+    src_file->write_obj(849032892);
+    src_file->simple_shift_left_content(2,2);
+    const int ptr = src_file->get_ptr();
+    src_file->shift_ptr(3);
+    // int tmp = 0;
+    // src_file->read_obj(tmp);
+    EXPECT_EQ(ptr,2);
+    // EXPECT_EQ(tmp,1234);
+    save_file("ShiftLeft");
 }
