@@ -62,7 +62,7 @@ TEST_F(SRCProviderImplFileTest, ShiftRight2) {
     save_file("ShiftRigth2-1");
 
     src_file->simple_shift_right_content(4*4,8,10);
-    src_file->simple_shift_right_content(10*4,4,10);
+    src_file->simple_shift_right_content(10*4,4,10); 
 
     unsigned long size = 0;
     // TODO get size trzeba dodać
