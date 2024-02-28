@@ -34,115 +34,43 @@ namespace bbdb::src_module::impl {
             file_.read(buffer, size_buffer);
         }
 
-        void simple_shift_right_content_unsafe_thread(const unsigned long &ptr, const unsigned long &content_size,
-                                                      unsigned int size_buffer = 4096) {
-            if (content_size == 0) return;
-            if (content_size > size_buffer) return shift_right_n_unsafe_thread(ptr, content_size);
-            if (shift_right_if_n_exceeds_file_size_unsafe_thread(ptr, content_size)) return;
-
-            unsigned long size = get_size_unsafe_thread();
-
-            set_ptr_unsafe_thread(ptr);
-            if (unsigned long size_to_end = get_ptr_unsafe_thread();size_to_end + size_buffer + content_size >= size ) {
-                size_to_end = size - size_to_end;
-                char buffer[size_to_end];
-                file_.read(buffer,size_to_end);
-                shift_ptr_unsafe_thread(-static_cast<long>(size_to_end - content_size));
-                file_.write(buffer,size_to_end);
-
+        void simple_shift_right_content_unsafe_thread(const unsigned long &ptr, const unsigned long &size_content,
+                                                      const unsigned int size_buffer = 4096) {
+            ptr_to_end_unsafe_thread();
+            const auto ptr_end = get_ptr_unsafe_thread();
+            if (ptr > ptr_end) {
+                std::cerr << "simple_shift_right_content_unsafe_thread error ptr > ptr_end";
+                throw std::runtime_error("simple_shift_right_content_unsafe_thread error ptr > ptr_end");
+            }
+            if (const unsigned long diff = ptr_end - ptr; diff < size_buffer) {
+                shift_ptr_unsafe_thread(-static_cast<long>(diff));
+                char buffer[diff];
+                file_.read(buffer,diff);
+                shift_ptr_unsafe_thread(-static_cast<long>(diff-size_content));
+                file_.write(buffer,diff);
                 set_ptr_unsafe_thread(ptr);
                 return;
             }
-
-            char buffer[size_buffer];
-            char content[content_size];
-
-
-            // unsigned long size = get_size_unsafe_thread() - (ptr + content_size);
-            // unsigned int n_shift = size / size_buffer;
-
-
-            file_.read(buffer,size_buffer);
-            file_.read(content,content_size);
-
-            unsigned long diff_buffer_size = size_buffer - content_size;
-
-            while (!file_.eof()) {
-                // TODO + size_buffer + content_size
-                if (unsigned long size_to_end = get_ptr_unsafe_thread();size_to_end  + size_buffer + content_size >= size ) {
-                    shift_ptr_unsafe_thread(-static_cast<long>(size_buffer));
-                    file_.write(buffer,size_buffer);
-
-                    size_to_end = size - size_to_end;
-                    if (size_buffer >= size_to_end) {
-                        file_.read(buffer,size_to_end);
-                        shift_ptr_unsafe_thread(-static_cast<long>(size_to_end));
-                        file_.write(content,content_size);
-                        file_.write(buffer,size_to_end);
-                    }else {
-                        file_.read(buffer,size_buffer);
-                        shift_ptr_unsafe_thread(-static_cast<long>(size_buffer));
-                        file_.write(content,content_size);
-                        shift_ptr_unsafe_thread(static_cast<long>(size_buffer-content_size));
-                        size_to_end = size_to_end - size_buffer;
-                        file_.read(content,size_to_end);
-                        shift_ptr_unsafe_thread(-static_cast<long>(size_to_end + size_buffer - content_size));
-                        file_.write(buffer,size_buffer);
-                        file_.write(content,size_to_end);
-                    }
-                    break;
-                }
+            while (size_buffer < get_ptr_unsafe_thread() - ptr ) {
                 shift_ptr_unsafe_thread(-static_cast<long>(size_buffer));
+                char buffer[size_buffer];
+                file_.read(buffer,size_buffer);
+                shift_ptr_unsafe_thread(-static_cast<long>(size_buffer-size_content));
                 file_.write(buffer,size_buffer);
-                file_.read(buffer+content_size,diff_buffer_size);
-                std::memcpy(buffer,content,content_size);
-                file_.read(content,content_size);
+                shift_ptr_unsafe_thread(-static_cast<long>(size_buffer+size_content));
             }
-
-            set_ptr_unsafe_thread(ptr);
-
-        }
-
-        void shift_right_n_unsafe_thread(const unsigned long &ptr, const unsigned long &n) {
-            // TODO kiedy n jest wieksze od całego pliku
-            if (shift_right_if_n_exceeds_file_size_unsafe_thread(ptr, n)) return;
-            if (n == 0) return;
-            char buffer[2][n];
-            bool switch_buffer = false;
-            unsigned long size = get_size_unsafe_thread();
-            set_ptr_unsafe_thread(ptr);
-            file_.read(buffer[switch_buffer], n);
-            while (!file_.eof()) {
-                if ((get_ptr_unsafe_thread() + n) >= size) {
-                    const unsigned long tmp = size - get_ptr_unsafe_thread();
-                    char tmp_buffer[tmp];
-                    file_.read(tmp_buffer, tmp);
-                    shift_ptr_unsafe_thread(-static_cast<long>(tmp));
-                    file_.write(buffer[switch_buffer], n);
-                    file_.write(tmp_buffer, tmp);
-                    break;
-                }
-                file_.read(buffer[!switch_buffer], n);
-                shift_ptr_unsafe_thread(-static_cast<long>(n));
-                file_.write(buffer[switch_buffer], n);
-                switch_buffer = !switch_buffer;
+            {
+                const unsigned long diff = get_ptr_unsafe_thread() - ptr;
+                shift_ptr_unsafe_thread(-static_cast<long>(diff));
+                char buffer[diff];
+                file_.read(buffer,diff);
+                shift_ptr_unsafe_thread(-static_cast<long>(diff-size_content));
+                file_.write(buffer,diff);
             }
+            set_ptr_unsafe_thread(ptr);
         }
 
-        bool shift_right_if_n_exceeds_file_size_unsafe_thread(const unsigned long &ptr, const unsigned long &n) {
-            const unsigned long size = get_size_unsafe_thread();
-            if (const unsigned long ptr_end = ptr + n; ptr_end > size) {
-                unsigned long diff = ptr_end - size;
-                char buffer[size];
-                set_ptr_unsafe_thread(0);
-                file_.read(buffer, size);
-                constexpr char nullChar = '\0';
-                file_.write(&nullChar, diff);
-                file_.write(buffer, size);
-                return true;
-            } else
-                return false;
-        }
+
 
         unsigned long get_size_unsafe_thread() {
             const auto streampos = get_ptr_unsafe_thread();
@@ -174,9 +102,7 @@ namespace bbdb::src_module::impl {
                 std::cerr << "get_ptr_unsafe_thread error < 0";
                 throw std::runtime_error("get_ptr_unsafe_thread error < 0");
             }
-            auto streampos = file_.tellg();
-            unsigned long t = streampos;
-            return streampos;
+            return file_.tellg();;
         }
 
     public:
@@ -221,7 +147,7 @@ namespace bbdb::src_module::impl {
 
         void lazy_delete_n(const unsigned long &ptr, const long &n) {
             std::lock_guard lock(mutex_);
-            shift_right_n_unsafe_thread(ptr, n);
+
         };
 
         void lazy_delete_(const unsigned long &ptr_start, const unsigned long &ptr_end) {

@@ -55,14 +55,14 @@ TEST_F(SRCProviderImplFileTest, ShiftRight) {
 }
 
 TEST_F(SRCProviderImplFileTest, ShiftRight2) {
-    int tab[]       = {1,2,3,4,    5,6,7,8,9,10,11,12,13,14,15};
+    int tab[]       = {1,2,3,4,    5,6,7,8,9,  10,11,12,13,14,15};
     int tab_out[]   = {1,2,3,4,0,0,5,6,7,8,9,0,10,11,12,13,14,15}; // 18
 
     src_file->write_obj(tab);
     save_file("ShiftRigth2-1");
 
     src_file->simple_shift_right_content(4*4,8,10);
-    src_file->simple_shift_right_content(10*4,4,10); 
+    src_file->simple_shift_right_content(10*4,4,10);
 
     unsigned long size = 0;
     // TODO get size trzeba dodać
