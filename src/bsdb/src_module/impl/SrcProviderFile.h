@@ -85,12 +85,14 @@ namespace bbdb::src_module::impl {
             set_ptr_unsafe_thread(ptr);
         }
 
-        unsigned long get_size_unsafe_thread() {
-            const auto streampos = get_ptr_unsafe_thread();
-            file_.seekg(0, std::ios::end);
-            const unsigned long tmp = get_ptr_unsafe_thread();
-            file_.seekg(streampos);
-            return tmp;
+        unsigned long get_size_unsafe_thread() const {
+            // const auto streampos = get_ptr_unsafe_thread();
+            // file_.seekg(0, std::ios::end);
+            // const unsigned long tmp = get_ptr_unsafe_thread();
+            // file_.seekg(streampos);
+            // return tmp;
+
+            return std::filesystem::file_size(path_);
         }
 
         void set_ptr_unsafe_thread(const unsigned long &ptr) {
