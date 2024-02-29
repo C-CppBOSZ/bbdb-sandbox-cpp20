@@ -23,7 +23,6 @@ int main() {
 
 
 
-
     // bbdb::Bodb::Bodb Bodb("/home/bogusz/CLionProjects/mainBSDB/test_db", "test_db");
     // auto Bodb = bbdb::Bodb::open_db_file("/home/bogusz/CLionProjects/mainBSDB/test_db", "test_db");
     // Bodb.add_simple_type(true,true,"int",4);

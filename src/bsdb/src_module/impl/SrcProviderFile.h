@@ -26,22 +26,26 @@ namespace bbdb::src_module::impl {
                                                      const unsigned long &size_buffer = 4096) {
             const auto size = get_size_unsafe_thread();
             if (ptr > size) {
-                std::cerr << "simple_shift_left_content_unsafe_thread error ptr > ptr_end";
-                throw std::runtime_error("simple_left_right_content_unsafe_thread error ptr > ptr_end");
+                std::cerr << "simple_shift_left_content_unsafe_thread error ptr:"<<ptr<<" > size:"<<size;
+                throw std::runtime_error("simple_left_right_content_unsafe_thread error ptr > size");
+            }
+            if (static_cast<long>(ptr) - static_cast<long>(content_size) < 0) {
+                std::cerr << "simple_shift_left_content_unsafe_thread error (ptr) - content_size < 0";
+                throw std::runtime_error("simple_shift_left_content_unsafe_thread error (ptr) - content_size < 0");
             }
             if (size < content_size) {
-                // std::filesystem::resize_file(file_,ptr);
+                std::filesystem::resize_file(path_,ptr);
                 ptr_to_end_unsafe_thread();
                 return;
             }
             set_ptr_unsafe_thread(ptr);
-            if (const unsigned long diff = size - ptr; diff >= size_buffer) {
+            if (const unsigned long diff = size - ptr; diff <= size_buffer) {
                 char buffer[diff];
                 file_.read(buffer,diff);
                 shift_ptr_unsafe_thread(-static_cast<long>(diff + content_size));
                 file_.write(buffer,diff);
 
-                // std::filesystem::resize_file(file_,size-content_size);
+                std::filesystem::resize_file(path_,size-content_size);
                 set_ptr_unsafe_thread(ptr);
                 return;
             }
@@ -86,12 +90,6 @@ namespace bbdb::src_module::impl {
         }
 
         unsigned long get_size_unsafe_thread() const {
-            // const auto streampos = get_ptr_unsafe_thread();
-            // file_.seekg(0, std::ios::end);
-            // const unsigned long tmp = get_ptr_unsafe_thread();
-            // file_.seekg(streampos);
-            // return tmp;
-
             return std::filesystem::file_size(path_);
         }
 
@@ -181,7 +179,9 @@ namespace bbdb::src_module::impl {
         unsigned int write_obj(const Args &... args) {
             std::lock_guard lock(mutex_);
             ((file_.write(reinterpret_cast<const char *>(&args), sizeof(args))), ...);
-            return (sizeof(args) + ...);
+            const long size = (sizeof(args) + ...);
+            shift_ptr_unsafe_thread(-size);
+            return size;
         };
 
 
@@ -189,14 +189,18 @@ namespace bbdb::src_module::impl {
         unsigned int write_container(const Args &... args) {
             std::lock_guard lock(mutex_);
             ((file_.write(reinterpret_cast<const char *>(args.data()), args.size() * sizeof(args.at(0)))), ...);
-            return ((args.size() * sizeof(args.at(0))) + ...);
+            const long size = ((args.size() * sizeof(args.at(0))) + ...);
+            shift_ptr_unsafe_thread(-size);
+            return size;
         };
 
         template<typename... Args>
         unsigned int read_obj(Args &... args) {
             std::lock_guard lock(mutex_);
             ((file_.read(reinterpret_cast<char *>(&args), sizeof(Args))), ...);
-            return (sizeof(Args) + ...);
+            const long size = (sizeof(Args) + ...);
+            shift_ptr_unsafe_thread(-size);
+            return size;
         }
 
 

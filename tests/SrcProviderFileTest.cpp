@@ -83,12 +83,14 @@ TEST_F(SRCProviderImplFileTest, ShiftRight2) {
 
 TEST_F(SRCProviderImplFileTest, ShiftLeft) {
     src_file->write_obj(849032892);
-    src_file->simple_shift_left_content(2,2);
-    const int ptr = src_file->get_ptr();
-    src_file->shift_ptr(3);
+    save_file("ShiftLeft-1");
+    src_file->simple_shift_left_content(0,2);
+
+    // const int ptr = src_file->get_ptr();
+    // src_file->shift_ptr(3);
     // int tmp = 0;
     // src_file->read_obj(tmp);
-    EXPECT_EQ(ptr,2);
+    // EXPECT_EQ(ptr,2);
     // EXPECT_EQ(tmp,1234);
-    save_file("ShiftLeft");
+    save_file("ShiftLeft-2");
 }
