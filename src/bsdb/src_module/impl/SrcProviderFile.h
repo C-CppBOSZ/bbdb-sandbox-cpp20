@@ -22,34 +22,42 @@ namespace bbdb::src_module::impl {
         mutable std::mutex mutex_;
         std::vector<unsigned long> ptrs_;
 
-        void simple_shift_left_content_unsafe_thread(const unsigned long &ptr, const unsigned long &content_size,
+        void simple_shift_left_content_unsafe_thread(unsigned long ptr, const unsigned long &content_size,
                                                      const unsigned long &size_buffer = 4096) {
             const auto size = get_size_unsafe_thread();
             if (ptr > size) {
                 std::cerr << "simple_shift_left_content_unsafe_thread error ptr:"<<ptr<<" > size:"<<size;
                 throw std::runtime_error("simple_left_right_content_unsafe_thread error ptr > size");
             }
-            if (static_cast<long>(ptr) - static_cast<long>(content_size) < 0) {
-                std::cerr << "simple_shift_left_content_unsafe_thread error (ptr) - content_size < 0";
-                throw std::runtime_error("simple_shift_left_content_unsafe_thread error (ptr) - content_size < 0");
-            }
-            if (size < content_size) {
+            if (ptr + content_size >= size ) {
                 std::filesystem::resize_file(path_,ptr);
                 ptr_to_end_unsafe_thread();
                 return;
             }
-            set_ptr_unsafe_thread(ptr);
-            if (const unsigned long diff = size - ptr; diff <= size_buffer) {
+            set_ptr_unsafe_thread(ptr + content_size);
+            if (const unsigned long diff = size - (ptr + content_size); diff <= size_buffer) {
                 char buffer[diff];
                 file_.read(buffer,diff);
                 shift_ptr_unsafe_thread(-static_cast<long>(diff + content_size));
                 file_.write(buffer,diff);
-
                 std::filesystem::resize_file(path_,size-content_size);
                 set_ptr_unsafe_thread(ptr);
                 return;
             }
-
+            while (get_ptr_unsafe_thread() + size_buffer < size) {
+                char buffer[size_buffer];
+                file_.read(buffer,size_buffer);
+                shift_ptr_unsafe_thread(-static_cast<long>(size_buffer + content_size));
+                file_.write(buffer,size_buffer);
+                shift_ptr_unsafe_thread(static_cast<long>(content_size));
+            }
+            if ( const unsigned long diff = size - get_ptr_unsafe_thread() ;diff != 0) {
+                char buffer[diff];
+                file_.read(buffer,diff);
+                shift_ptr_unsafe_thread(-static_cast<long>(diff + content_size));
+                file_.write(buffer,diff);
+                std::filesystem::resize_file(path_,size-content_size);
+            }
             set_ptr_unsafe_thread(ptr);
         }
 
@@ -78,8 +86,7 @@ namespace bbdb::src_module::impl {
                 file_.write(buffer,size_buffer);
                 shift_ptr_unsafe_thread(-static_cast<long>(size_buffer+size_content));
             }
-            {
-                const unsigned long diff = get_ptr_unsafe_thread() - ptr;
+            if ( const unsigned long diff = get_ptr_unsafe_thread() - ptr;diff != 0){
                 shift_ptr_unsafe_thread(-static_cast<long>(diff));
                 char buffer[diff];
                 file_.read(buffer,diff);
@@ -155,26 +162,9 @@ namespace bbdb::src_module::impl {
         void delete_n(const unsigned long &ptr, const long &n) {
         };
 
-        void delete_(const unsigned long &ptr_start, const unsigned long &ptr_end) {
+        void delete_ptr_to_ptr(const unsigned long &ptr_start, const unsigned long &ptr_end) {
         };
 
-        void lazy_delete_n(const unsigned long &ptr, const long &n) {
-            std::lock_guard lock(mutex_);
-
-        };
-
-        void lazy_delete_(const unsigned long &ptr_start, const unsigned long &ptr_end) {
-        }
-
-        // template<typename... Args>
-        // unsigned int write_obj(const Args &... args) {
-        //     // if constexpr (sizeof...(Args) > 0) {
-        //         (file_.write(reinterpret_cast<const char *>(args), sizeof(Args)), ...);
-        //         return (sizeof(Args) + ...);
-        //     // } else {
-        //     //     return 0;
-        //     // }
-        // };
         template<typename... Args>
         unsigned int write_obj(const Args &... args) {
             std::lock_guard lock(mutex_);
@@ -183,7 +173,6 @@ namespace bbdb::src_module::impl {
             shift_ptr_unsafe_thread(-size);
             return size;
         };
-
 
         template<base::contaner_out... Args>
         unsigned int write_container(const Args &... args) {
@@ -203,15 +192,24 @@ namespace bbdb::src_module::impl {
             return size;
         }
 
-
         template<typename... Args>
         unsigned int insert_obj(const Args &... args) {
             std::lock_guard lock(mutex_);
+            const long size = (sizeof(args) + ...);
+            simple_shift_right_content_unsafe_thread(get_ptr_unsafe_thread(),size);
+            ((file_.write(reinterpret_cast<const char *>(&args), sizeof(args))), ...);
+            shift_ptr_unsafe_thread(-size);
+            return size;
         };
 
         template<base::contaner_out... Args>
         unsigned int insert_contaner(const Args &... args) {
             std::lock_guard lock(mutex_);
+            const long size = ((args.size() * sizeof(args.at(0))) + ...);
+            simple_shift_right_content_unsafe_thread(get_ptr_unsafe_thread(),size);
+            ((file_.write(reinterpret_cast<const char *>(args.data()), args.size() * sizeof(args.at(0)))), ...);
+            shift_ptr_unsafe_thread(-size);
+            return size;
         };
     };
 }

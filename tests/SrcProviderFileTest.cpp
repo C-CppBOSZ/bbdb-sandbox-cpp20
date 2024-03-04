@@ -73,7 +73,7 @@ TEST_F(SRCProviderImplFileTest, ShiftRight2) {
     src_file->set_ptr(0);
     for (int i = 0; i < 18; ++i) {
         int tmp = 0;
-        src_file->read_obj(tmp);
+        src_file->shift_ptr(src_file->read_obj(tmp));
         if (tab_out[i] != 0)
         EXPECT_EQ(tmp,tab_out[i]);
     }
@@ -82,15 +82,62 @@ TEST_F(SRCProviderImplFileTest, ShiftRight2) {
 }
 
 TEST_F(SRCProviderImplFileTest, ShiftLeft) {
-    src_file->write_obj(849032892);
-    save_file("ShiftLeft-1");
-    src_file->simple_shift_left_content(0,2);
-
-    // const int ptr = src_file->get_ptr();
-    // src_file->shift_ptr(3);
-    // int tmp = 0;
-    // src_file->read_obj(tmp);
-    // EXPECT_EQ(ptr,2);
-    // EXPECT_EQ(tmp,1234);
-    save_file("ShiftLeft-2");
+    const int in[4] = {1,2,3,4};
+    src_file->write_obj(in);
+    // save_file("ShiftLeft-1");
+    src_file->simple_shift_left_content(0,8);
+    const int ptr = src_file->get_ptr();
+    int out[2];
+    src_file->read_obj(out);
+    EXPECT_EQ(ptr,0);
+    EXPECT_EQ(out[0],3);
+    EXPECT_EQ(out[1],4);
+    // save_file("ShiftLeft-2");
 }
+
+TEST_F(SRCProviderImplFileTest, ShiftLeft2) {
+    const int in[4] = {1,2,3,4};
+    src_file->write_obj(in);
+    // save_file("ShiftLeft2-1");
+    src_file->simple_shift_left_content(8,10);
+    const int ptr = src_file->get_ptr();
+    // todo get size
+    src_file->ptr_to_end();
+    unsigned long ptr1 = src_file->get_ptr();
+    src_file->set_ptr(0);
+    int out[2];
+    src_file->read_obj(out);
+    EXPECT_EQ(ptr,8);
+    EXPECT_EQ(ptr1,8);
+
+    EXPECT_EQ(out[0],1);
+    EXPECT_EQ(out[1],2);
+    // save_file("ShiftLeft2-2");
+}
+
+TEST_F(SRCProviderImplFileTest, ShiftLeft3) {
+    int in[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+    int out[] = {1,2,8,9,10,11,12,13,14,15};
+    src_file->write_obj(in);
+    // save_file("ShiftLeft3-1");
+    src_file->simple_shift_left_content(8,5*4,10);
+    const int ptr = src_file->get_ptr();
+    // todo get size
+    src_file->ptr_to_end();
+    unsigned long ptr1 = src_file->get_ptr();
+    src_file->set_ptr(0);
+
+    EXPECT_EQ(ptr,8);
+    EXPECT_EQ(ptr1,10*4);
+
+    for (int i = 0; i < 10; ++i) {
+        int tmp = 0;
+        src_file->shift_ptr(src_file->read_obj(tmp));
+        if (out[i] != 0)
+            EXPECT_EQ(tmp,out[i]);
+    }
+
+    // save_file("ShiftLeft3-2");
+}
+
+

@@ -51,20 +51,10 @@ namespace bbdb::src_module::impl {
             src_->delete_n(ptr, n);
         };
 
-        void delete_(const unsigned long &ptr_start, const unsigned long &ptr_end) override {
+        void delete_ptr_to_ptr(const unsigned long &ptr_start, const unsigned long &ptr_end) override {
             std::lock_guard lg(mutex_);
-            src_->delete_(ptr_start, ptr_end);
+            src_->delete_ptr_to_ptr(ptr_start, ptr_end);
         };
-
-        void lazy_delete_n(const unsigned long &ptr, const long &n) override {
-            std::lock_guard lg(mutex_);
-            src_->lazy_delete_n(ptr, n);
-        };
-
-        void lazy_delete_(const unsigned long &ptr_start, const unsigned long &ptr_end) override {
-            std::lock_guard lg(mutex_);
-            src_->lazy_delete_(ptr_start, ptr_end);
-        }
 
         guard::SrcQueryGuard<Derived> src_transaction() override {
             return guard::SrcQueryGuard<Derived>(mutex_, *src_);

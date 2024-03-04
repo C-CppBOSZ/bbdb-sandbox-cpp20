@@ -42,10 +42,7 @@ namespace bbdb::src_module::base {
         virtual void simple_shift_right_content(const unsigned long &ptr,const unsigned long &content_size,const unsigned long &size_buffer = 4096) = 0;
 
         virtual void delete_n(const unsigned long &ptr,const long &n) = 0;
-        virtual void delete_(const unsigned long &ptr_start,const unsigned long &ptr_end) = 0;
-
-        virtual void lazy_delete_n(const unsigned long &ptr,const long &n) = 0;
-        virtual void lazy_delete_(const unsigned long &ptr_start,const unsigned long &ptr_end) = 0;
+        virtual void delete_ptr_to_ptr(const unsigned long &ptr_start,const unsigned long &ptr_end) = 0;
 
         template<typename... Args>
         unsigned int write_obj(const Args &... args) {
