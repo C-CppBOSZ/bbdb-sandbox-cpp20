@@ -22,12 +22,12 @@ namespace bbdb::src_module::impl {
         mutable std::mutex mutex_;
         std::vector<unsigned long> ptrs_;
 
-        void simple_shift_left_content_unsafe_thread(unsigned long ptr, const unsigned long &content_size,
+        void shift_left_content_ptr_unsafe_thread(unsigned long ptr, const unsigned long &content_size,
                                                      const unsigned long &size_buffer = 4096) {
             const auto size = get_size_unsafe_thread();
             if (ptr > size) {
-                std::cerr << "simple_shift_left_content_unsafe_thread error ptr:"<<ptr<<" > size:"<<size;
-                throw std::runtime_error("simple_left_right_content_unsafe_thread error ptr > size");
+                std::cerr << "shift_left_content_ptr_unsafe_thread error ptr:"<<ptr<<" > size:"<<size;
+                throw std::runtime_error("left_right_content_ptr_unsafe_thread error ptr > size");
             }
             if (ptr + content_size >= size ) {
                 std::filesystem::resize_file(path_,ptr);
@@ -61,13 +61,13 @@ namespace bbdb::src_module::impl {
             set_ptr_unsafe_thread(ptr);
         }
 
-        void simple_shift_right_content_unsafe_thread(const unsigned long &ptr, const unsigned long &size_content,
+        void shift_right_content_ptr_unsafe_thread(const unsigned long &ptr, const unsigned long &size_content,
                                                       const unsigned int size_buffer = 4096) {
             ptr_to_end_unsafe_thread();
             const auto ptr_end = get_ptr_unsafe_thread();
             if (ptr > ptr_end) {
-                std::cerr << "simple_shift_right_content_unsafe_thread error ptr > ptr_end";
-                throw std::runtime_error("simple_shift_right_content_unsafe_thread error ptr > ptr_end");
+                std::cerr << "shift_right_content_ptr_unsafe_thread error ptr > ptr_end";
+                throw std::runtime_error("shift_right_content_ptr_unsafe_thread error ptr > ptr_end");
             }
             if (const unsigned long diff = ptr_end - ptr; diff <= size_buffer) {
                 shift_ptr_unsafe_thread(-static_cast<long>(diff));
@@ -146,24 +146,28 @@ namespace bbdb::src_module::impl {
 
         void shift_ptr(const long &shift) override;
 
-        void simple_shift_left_content(const unsigned long &ptr, const unsigned long &content_size,
+        void shift_left_ptr_content(const unsigned long &ptr, const unsigned long &content_size,
                                        const unsigned long &size_buffer = 4096) override {
             std::lock_guard lock(mutex_);
-            simple_shift_left_content_unsafe_thread(ptr, content_size, size_buffer);
+            shift_left_content_ptr_unsafe_thread(ptr, content_size, size_buffer);
         };
 
-        void simple_shift_right_content(const unsigned long &ptr, const unsigned long &content_size,
+        void shift_right_ptr_content(const unsigned long &ptr, const unsigned long &content_size,
                                         const unsigned long &size_buffer = 4096) override {
             std::lock_guard lock(mutex_);
-            simple_shift_right_content_unsafe_thread(ptr, content_size, size_buffer);
+            shift_right_content_ptr_unsafe_thread(ptr, content_size, size_buffer);
         };
 
 
-        void delete_n(const unsigned long &ptr, const long &n) {
+        void delete_ptr_content(const unsigned long &ptr, const long &content_size) {
         };
+
+        void delete_content(const long &content_size) override;
 
         void delete_ptr_to_ptr(const unsigned long &ptr_start, const unsigned long &ptr_end) {
         };
+
+        void delete_to_ptr(const unsigned long &ptr_end) override;
 
         template<typename... Args>
         unsigned int write_obj(const Args &... args) {
@@ -196,7 +200,7 @@ namespace bbdb::src_module::impl {
         unsigned int insert_obj(const Args &... args) {
             std::lock_guard lock(mutex_);
             const long size = (sizeof(args) + ...);
-            simple_shift_right_content_unsafe_thread(get_ptr_unsafe_thread(),size);
+            shift_right_content_ptr_unsafe_thread(get_ptr_unsafe_thread(),size);
             ((file_.write(reinterpret_cast<const char *>(&args), sizeof(args))), ...);
             shift_ptr_unsafe_thread(-size);
             return size;
@@ -206,7 +210,7 @@ namespace bbdb::src_module::impl {
         unsigned int insert_contaner(const Args &... args) {
             std::lock_guard lock(mutex_);
             const long size = ((args.size() * sizeof(args.at(0))) + ...);
-            simple_shift_right_content_unsafe_thread(get_ptr_unsafe_thread(),size);
+            shift_right_content_ptr_unsafe_thread(get_ptr_unsafe_thread(),size);
             ((file_.write(reinterpret_cast<const char *>(args.data()), args.size() * sizeof(args.at(0)))), ...);
             shift_ptr_unsafe_thread(-size);
             return size;

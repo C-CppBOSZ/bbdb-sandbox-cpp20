@@ -44,7 +44,7 @@ protected:
 
 TEST_F(SRCProviderImplFileTest, ShiftRight) {
     src_file->write_obj(1234);
-    src_file->simple_shift_right_content(0,3);
+    src_file->shift_right_ptr_content(0,3);
     const int ptr = src_file->get_ptr();
     src_file->shift_ptr(3);
     int tmp = 0;
@@ -61,8 +61,8 @@ TEST_F(SRCProviderImplFileTest, ShiftRight2) {
     src_file->write_obj(tab);
     // save_file("ShiftRigth2-1");
 
-    src_file->simple_shift_right_content(4*4,8,10);
-    src_file->simple_shift_right_content(10*4,4,10);
+    src_file->shift_right_ptr_content(4*4,8,10);
+    src_file->shift_right_ptr_content(10*4,4,10);
 
     unsigned long size = 0;
     // TODO get size trzeba dodać
@@ -85,7 +85,7 @@ TEST_F(SRCProviderImplFileTest, ShiftLeft) {
     const int in[4] = {1,2,3,4};
     src_file->write_obj(in);
     // save_file("ShiftLeft-1");
-    src_file->simple_shift_left_content(0,8);
+    src_file->shift_left_ptr_content(0,8);
     const int ptr = src_file->get_ptr();
     int out[2];
     src_file->read_obj(out);
@@ -99,7 +99,7 @@ TEST_F(SRCProviderImplFileTest, ShiftLeft2) {
     const int in[4] = {1,2,3,4};
     src_file->write_obj(in);
     // save_file("ShiftLeft2-1");
-    src_file->simple_shift_left_content(8,10);
+    src_file->shift_left_ptr_content(8,10);
     const int ptr = src_file->get_ptr();
     // todo get size
     src_file->ptr_to_end();
@@ -120,7 +120,7 @@ TEST_F(SRCProviderImplFileTest, ShiftLeft3) {
     int out[] = {1,2,8,9,10,11,12,13,14,15};
     src_file->write_obj(in);
     // save_file("ShiftLeft3-1");
-    src_file->simple_shift_left_content(8,5*4,10);
+    src_file->shift_left_ptr_content(8,5*4,10);
     const int ptr = src_file->get_ptr();
     // todo get size
     src_file->ptr_to_end();

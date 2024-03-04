@@ -46,9 +46,9 @@ namespace bbdb::src_module::impl {
             src_->shift_ptr(shift);
         };
 
-        void delete_n(const unsigned long &ptr, const long &n) override {
+        void delete_ptr_content(const unsigned long &ptr, const long &content_size) override {
             std::lock_guard lg(mutex_);
-            src_->delete_n(ptr, n);
+            src_->delete_ptr_content(ptr, content_size);
         };
 
         void delete_ptr_to_ptr(const unsigned long &ptr_start, const unsigned long &ptr_end) override {
