@@ -40,7 +40,7 @@ namespace bbdb::src_module::base {
         virtual void ptr_to_end() = 0;
 
 
-        virtual void shift_ptr(const unsigned long &shift) = delete;
+        // void shift_ptr(const unsigned long &shift) = delete;
 
         virtual void shift_ptr(const long &shift) = 0;
 

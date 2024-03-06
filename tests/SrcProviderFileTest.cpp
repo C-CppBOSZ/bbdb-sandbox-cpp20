@@ -65,12 +65,9 @@ TEST_F(SRCProviderImplFileTest, ShiftRight2) {
     src_file->shift_right_ptr_content(10*4,4,10);
 
     unsigned long size = 0;
-    // TODO get size trzeba dodać
-    src_file->ptr_to_end();
-    size = src_file->get_ptr();
+    size = src_file->get_size();
     EXPECT_EQ(size,(15*4+12));
 
-    src_file->set_ptr(0);
     for (int i = 0; i < 18; ++i) {
         int tmp = 0;
         src_file->shift_ptr(src_file->read_obj(tmp));
@@ -101,13 +98,10 @@ TEST_F(SRCProviderImplFileTest, ShiftLeft2) {
     // save_file("ShiftLeft2-1");
     src_file->shift_left_ptr_content(8,10);
     const int ptr = src_file->get_ptr();
-    // todo get size
-    src_file->ptr_to_end();
-    unsigned long ptr1 = src_file->get_ptr();
-    src_file->set_ptr(0);
+    unsigned long ptr1 = src_file->get_size();
     int out[2];
     src_file->read_obj(out);
-    EXPECT_EQ(ptr,8);
+    EXPECT_EQ(ptr,0);
     EXPECT_EQ(ptr1,8);
 
     EXPECT_EQ(out[0],1);
@@ -122,12 +116,9 @@ TEST_F(SRCProviderImplFileTest, ShiftLeft3) {
     // save_file("ShiftLeft3-1");
     src_file->shift_left_ptr_content(8,5*4,10);
     const int ptr = src_file->get_ptr();
-    // todo get size
-    src_file->ptr_to_end();
-    unsigned long ptr1 = src_file->get_ptr();
-    src_file->set_ptr(0);
+    unsigned long ptr1 = src_file->get_size();
 
-    EXPECT_EQ(ptr,8);
+    EXPECT_EQ(ptr,0);
     EXPECT_EQ(ptr1,10*4);
 
     for (int i = 0; i < 10; ++i) {
