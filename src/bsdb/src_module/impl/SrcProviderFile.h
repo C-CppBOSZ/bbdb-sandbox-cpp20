@@ -162,6 +162,11 @@ namespace bbdb::src_module::impl {
             return size;
         };
 
+        // unsigned int write(char * p, const unsigned long size) {
+        //     file_.write(p,size);
+        //     return size;
+        // }
+
         template<base::contaner_out... Args>
         unsigned int write_container(const Args &... args) {
             ((file_.write(reinterpret_cast<const char *>(args.data()), args.size() * sizeof(args.at(0)))), ...);
@@ -177,6 +182,7 @@ namespace bbdb::src_module::impl {
             shift_ptr(-size);
             return size;
         }
+
 
         template<typename... Args>
         unsigned int insert_obj(const Args &... args) {

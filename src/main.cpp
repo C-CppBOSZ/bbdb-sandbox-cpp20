@@ -6,6 +6,7 @@
 #include <vector>
 #include <type_traits>
 
+
 #include "bsdb/bodb/Bodb.h"
 #include "bsdb/bodb/SchemeB.h"
 
@@ -16,9 +17,26 @@
 // BinaryBlueprintDB
 // bbdb
 
+template<typename... Args>
+std::vector<char> ArgsToVector(Args... args) {
+    std::vector<char> resultVector;
+    resultVector.reserve((sizeof(Args)+...));
+    (..., (resultVector.insert(resultVector.end(), reinterpret_cast<const char *>(&args), reinterpret_cast<const char *>(&args) + sizeof(args))));
+    return resultVector;
+}
+
+template<typename... Args,size_t N = (sizeof(Args)+...)>
+std::array<char,N> ArgsToArray(Args... args) {
+    std::array<char, N> arr;
+    char* ptr = arr.data();
+    ((memcpy(ptr, &args, sizeof(args)), ptr += sizeof(args)), ...);
+    return arr;
+}
+
+
+
 
 int main() {
-    std::cout << "main";
 
 
 

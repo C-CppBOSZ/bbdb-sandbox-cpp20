@@ -27,7 +27,9 @@ set(SOURCES
         src/bsdb/src_module/guard/SrcQueryGuard.h
         src/bsdb/src_module/src_module.h
         src/bsdb/src_module/base/SrcDaemonBase.cpp
-        src/bsdb/src_module/base/SrcDaemonBase.h)
+        src/bsdb/src_module/base/SrcDaemonBase.h
+        src/bsdb/src_module/impl/SrcThreadSafe.cpp
+        src/bsdb/src_module/impl/SrcThreadSafe.h)
 
 set(TESTS
         tests/test.cpp
